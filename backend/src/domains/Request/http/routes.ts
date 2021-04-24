@@ -1,6 +1,7 @@
 import { Router } from 'express';
+
 import { createMiddleware } from '../middlewares';
-import { RequestController } from './RequestController';
+import RequestController from './RequestController';
 
 const router = Router();
 

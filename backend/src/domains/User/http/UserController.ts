@@ -3,16 +3,22 @@ import { CustomError } from '../../../errors/CustomError';
 import UserService from '../services/UserService';
 
 class UserController {
-  private userService: UserService;
+  async authenticate(request: Request, response: Response) {
+    const userService = new UserService();
 
-  constructor() {
-    this.userService = new UserService();
+    const authenticated = await userService.authenticate(request.body);
+
+    if (authenticated.success) {
+      return response.status(200).json(authenticated.data);
+    }
+
+    throw new CustomError(authenticated.message, 401);
   }
 
-  async authenticate(request: Request, response: Response) {}
-
   async create(request: Request, response: Response) {
-    const created = await this.userService.create(request.body);
+    const userService = new UserService();
+
+    const created = await userService.create(request.body);
 
     if (created.success) {
       return response.status(201).json(created.data);
@@ -22,4 +28,4 @@ class UserController {
   }
 }
 
-export { UserController };
+export default UserController;

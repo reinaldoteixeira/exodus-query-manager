@@ -9,7 +9,7 @@
         "./src/database/migrations/**.ts"
     ],
     "entities": [
-        "./src/models/**.ts"
+        "./src/domains/*/models/**.ts"
     ],
     "logging": false,
     "cli": {
