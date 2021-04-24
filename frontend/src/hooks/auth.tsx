@@ -1,11 +1,22 @@
-import { createContext, useCallback, useContext, useState } from 'react';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from 'react';
 import Cookies from 'js-cookie';
+import { useRouter } from 'next/router';
+
+import AccessDenied from '../components/templates/AccessDenied/AccessDenied';
 import api from '../services/api';
+import Loader from '../components/modules/Loader';
 
 interface User {
   id: string;
   name: string;
   email: string;
+  role: string;
 }
 
 interface SignInCredentials {
@@ -15,6 +26,7 @@ interface SignInCredentials {
 
 interface AuthContextPayload {
   user: User;
+  authenticated: boolean;
   signIn(credentials: SignInCredentials): Promise<void>;
   signOut(): void;
 }
@@ -22,37 +34,65 @@ interface AuthContextPayload {
 const AuthContext = createContext<AuthContextPayload>({} as AuthContextPayload);
 
 export const AuthProvider: React.FC = ({ children }) => {
+  const router = useRouter();
   const [user, setUser] = useState(null);
-  const [token, setToken] = useState(null);
+  const [authenticated, setAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  const signIn = useCallback(async ({ email, password }) => {
-    const response = await api.post('/users/authenticate', {
+  useEffect(() => {
+    const token = Cookies.get('@exodus:token');
+    const user = Cookies.get('@exodus:user');
+
+    if (token) {
+      api.defaults.headers.authorization = `Bearer ${JSON.parse(token)}`;
+      setUser(JSON.parse(user));
+      setAuthenticated(true);
+    }
+
+    setLoading(false);
+  }, []);
+
+  const signIn = async ({ email, password }) => {
+    const response = await api.post('/authenticate', {
       email,
       password,
     });
     const { user, token } = response.data;
 
     Cookies.set('@exodus:user', JSON.stringify(user));
-    Cookies.set('@exodus:token', token);
+    Cookies.set('@exodus:token', JSON.stringify(token));
 
     api.defaults.headers.authorization = `Bearer ${token}`;
 
     setUser(user);
-    setToken(token);
-  }, []);
+    setAuthenticated(true);
 
-  const signOut = useCallback(() => {
-    Cookies.remove('@exodus:user');
+    router.push('/');
+  };
+
+  const signOut = () => {
     Cookies.remove('@exodus:token');
-
+    Cookies.remove('@exodus:user');
     setUser(null);
-    setToken(null);
-  }, []);
+    setAuthenticated(false);
+    router.push('/login');
+  };
+
+  var publicRouters = ['/login'];
+
+  if ((typeof window !== 'undefined' && loading) || loading) {
+    return <Loader />;
+  }
+
+  if (!authenticated && !publicRouters.includes(router.route)) {
+    return <AccessDenied />;
+  }
 
   return (
     <AuthContext.Provider
       value={{
         user,
+        authenticated,
         signIn,
         signOut,
       }}
@@ -66,5 +106,3 @@ export function useAuth(): AuthContextPayload {
   const context = useContext(AuthContext);
   return context;
 }
-
-export default AuthProvider;

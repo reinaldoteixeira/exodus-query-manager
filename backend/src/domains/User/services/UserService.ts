@@ -1,12 +1,7 @@
-import bcrypt, { compare } from 'bcryptjs';
+import bcrypt from 'bcryptjs';
 import { getCustomRepository } from 'typeorm';
 
 import { UsersRepository } from '../repositories/UsersRepository';
-
-interface AuthType {
-  email: string;
-  password: string;
-}
 
 interface CreateType {
   name: string;
@@ -22,40 +17,6 @@ interface ResponseType {
 }
 
 class UserService {
-  async authenticate(payload: AuthType): Promise<ResponseType> {
-    const { email, password } = payload;
-
-    const userRepository = getCustomRepository(UsersRepository);
-
-    const userAlreadyExists = await userRepository.findOne({
-      email,
-    });
-
-    if (!userAlreadyExists) {
-      return {
-        success: false,
-        message: 'No authenticate',
-      };
-    }
-
-    const result = await compare(password, userAlreadyExists.password);
-
-    if (!result) {
-      return {
-        success: false,
-        message: 'No authenticate',
-      };
-    }
-
-    return {
-      success: true,
-      data: {
-        user: userAlreadyExists,
-        token: 'ameba',
-      },
-    };
-  }
-
   async create(payload: CreateType): Promise<ResponseType> {
     try {
       const { name, email, role } = payload;

@@ -13,7 +13,7 @@ const RequestRow: React.FC<RowProps> = ({ id, details, requesterImage }) => {
   const router = useRouter();
 
   const showRequest = (id) => {
-    router.push(`/requests/${id}`);
+    router.push(`/${id}`);
   };
 
   return (

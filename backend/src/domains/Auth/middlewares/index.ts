@@ -3,16 +3,16 @@ import { NextFunction, Request, Response } from 'express';
 
 import { CustomError } from '../../../errors/CustomError';
 
-export const createMiddleware = async (
+export const authMiddleware = async (
   request: Request,
   response: Response,
   next: NextFunction
 ) => {
   const schema = Yup.object().shape({
-    name: Yup.string().required('Name is required'),
     email: Yup.string()
       .email('Email should be valid')
       .required('Email is required'),
+    password: Yup.string().required('Password is required'),
   });
 
   try {

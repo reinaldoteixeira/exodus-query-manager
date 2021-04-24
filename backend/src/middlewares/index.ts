@@ -6,7 +6,7 @@ import { CustomError } from '../errors/CustomError';
 export const authMiddleware = async (
   request: Request,
   response: Response,
-  _next: NextFunction
+  next: NextFunction
 ) => {
   const { authorization } = request.headers;
 
@@ -16,6 +16,14 @@ export const authMiddleware = async (
 
   const [, token] = authorization.split(' ');
 
+  jwt.verify(token, process.env.TOKEN_SECRET, (err: any) => {
+    if (err) {
+      return response.sendStatus(403);
+    }
+
+    next();
+  });
+
   try {
   } catch (err) {}
 };
@@ -24,7 +32,7 @@ export const errorMiddleware = (
   err: Error,
   request: Request,
   response: Response,
-  _next: NextFunction
+  next: NextFunction
 ) => {
   if (err instanceof CustomError) {
     return response.status(err.statusCode).json({

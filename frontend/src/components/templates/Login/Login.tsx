@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import * as Yup from 'yup';
 import { Button, Form } from 'react-bootstrap';
 import { Main, Title, Panel } from './styles';
@@ -6,12 +6,20 @@ import { useAuth } from '../../../hooks/auth';
 import getValidationErrors, {
   Errors,
 } from '../../../utils/getValidationErrors';
+import { useRouter } from 'next/router';
 
 const Login: React.FC = () => {
-  const { signIn } = useAuth();
+  const { authenticated, signIn } = useAuth();
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [errors, setErrors] = useState({} as Errors);
+  const [password, setPassword] = useState('');
+  const router = useRouter();
+
+  useEffect(() => {
+    if (authenticated) {
+      router.push('/');
+    }
+  }, []);
 
   const handleSubmit = async (event: React.SyntheticEvent<EventTarget>) => {
     try {

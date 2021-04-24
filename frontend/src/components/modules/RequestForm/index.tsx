@@ -95,7 +95,7 @@ const RequestForm: React.FC<UserFormProps> = ({
   };
 
   const handleCancel = () => {
-    router.push(`/requests`);
+    router.push(`/`);
   };
 
   return (

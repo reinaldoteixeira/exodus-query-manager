@@ -1,4 +1,5 @@
 import cors from 'cors';
+import dotenv from 'dotenv';
 import express from 'express';
 import 'express-async-errors';
 import 'reflect-metadata';
@@ -8,6 +9,8 @@ import { errorMiddleware } from './middlewares';
 import { router } from './routes';
 
 createConnection();
+
+dotenv.config();
 
 const app = express();
 

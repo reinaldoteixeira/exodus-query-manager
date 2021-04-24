@@ -1,12 +1,12 @@
-
 import Default from '../components/layouts/Default/Default';
+import RequestsPage from '../components/templates/Requests';
 
-const Home: React.FC = () => {
+const Requests: React.FC = () => {
   return (
     <Default>
-      teste
+      <RequestsPage />
     </Default>
   );
-}
+};
 
-export default Home;
+export default Requests;

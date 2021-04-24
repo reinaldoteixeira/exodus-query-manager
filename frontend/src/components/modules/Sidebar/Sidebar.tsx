@@ -1,8 +1,8 @@
 import { useRouter } from 'next/router';
-import { NavItem, NavText, NavIcon } from '@trendmicro/react-sidenav';
+import { NavText, NavIcon } from '@trendmicro/react-sidenav';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCodeBranch, faUsers } from '@fortawesome/free-solid-svg-icons';
-import { SideNav } from './styles';
+import { SideNav, NavItem } from './styles';
 
 interface SidebarProps {
   onToggle: () => void;
@@ -19,12 +19,12 @@ const Sidebar: React.FC<SidebarProps> = ({ onToggle }) => {
   return (
     <SideNav className="shadow-lg" onToggle={onToggle}>
       <SideNav.Toggle />
-      <SideNav.Nav defaultSelected="">
+      <SideNav.Nav defaultSelected="/">
         <NavItem
           eventKey="requests"
-          active={pathname === '/requests'}
+          active={pathname === '/'}
           onClick={() => {
-            handleNavigation('/requests');
+            handleNavigation('/');
           }}
         >
           <NavIcon>

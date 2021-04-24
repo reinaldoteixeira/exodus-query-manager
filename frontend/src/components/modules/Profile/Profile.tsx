@@ -1,11 +1,13 @@
 import { useState, useEffect, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSignOutAlt } from '@fortawesome/free-solid-svg-icons'
+import { faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
 import { Main } from './styles';
+import { useAuth } from '../../../hooks/auth';
 
 const Profile: React.FC = () => {
   const profileRef = useRef(null);
   const [open, setOpen] = useState(false);
+  const { user, signOut } = useAuth();
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -27,18 +29,17 @@ const Profile: React.FC = () => {
 
   return (
     <Main ref={profileRef} onClick={handleToggle}>
-      <span>User name</span>
-      {
-        open &&
+      <span>{user.name}</span>
+      {open && (
         <ul className="shadow-sm">
-          <li>
+          <li onClick={signOut}>
             <span className="icon">
               <FontAwesomeIcon icon={faSignOutAlt} />
             </span>
             <span>Logout</span>
           </li>
         </ul>
-      }
+      )}
     </Main>
   );
 };

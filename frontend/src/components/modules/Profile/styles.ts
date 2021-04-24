@@ -7,13 +7,14 @@ export const Main = styled.div`
 
   ul {
     background: #ffffff;
-    border: 1px solid ${props => props.theme.colors.light};
+    border: 1px solid ${(props) => props.theme.colors.light};
     border-radius: 4px;
     list-style-type: none;
     margin-top: 10px;
     padding: 10px 0px;
     position: absolute;
     right: 30px;
+    z-index: 100;
 
     li {
       align-items: center;
@@ -22,7 +23,7 @@ export const Main = styled.div`
       padding: 5px 20px;
 
       &:hover {
-        color: ${props => props.theme.colors.primary};
+        color: ${(props) => props.theme.colors.primary};
       }
 
       .icon {

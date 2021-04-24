@@ -10,6 +10,7 @@ import RequestForm from '../../modules/RequestForm';
 import api from '../../../services/api';
 import Loader from '../../modules/Loader';
 import { useRouter } from 'next/router';
+import { useAuth } from '../../../hooks/auth';
 
 interface RequestState {
   host: string;
@@ -21,10 +22,11 @@ interface RequestState {
 }
 
 const RequestCreate: React.FC = () => {
-  const router = useRouter();
-  const [request, setRequest] = useState({} as RequestState);
   const [errors, setErrors] = useState({} as Errors);
+  const [request, setRequest] = useState({} as RequestState);
+  const router = useRouter();
   const [showLoader, setShowLoader] = useState(false);
+  const { user } = useAuth();
 
   const handleChange = async (key: string, value: any) => {
     await setRequest({
@@ -66,12 +68,12 @@ const RequestCreate: React.FC = () => {
       try {
         const response = await api.post('/requests', {
           ...request,
-          userId: '123', //getsession
+          userId: user.id,
         });
 
         const requestId = response.data.id;
 
-        router.push(`/requests/${requestId}`);
+        router.push(`/${requestId}`);
       } catch (err) {
         console.log(`ERROR: ${err}`);
       }

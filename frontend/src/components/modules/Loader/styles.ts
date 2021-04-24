@@ -5,7 +5,7 @@ export const Spinner = styled(ReactSpinner)`
   position: absolute;
   top: 50%;
   left: 50%;
-  color: ${(props) => props.theme.colors.primary};
+  color: ${(props) => props.theme?.colors?.primary};
   width: 3rem;
   height: 3rem;
 `;
