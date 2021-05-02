@@ -25,3 +25,15 @@ export const RequestStatus = styled.p`
   margin-bottom: 0;
   text-align: center;
 `;
+
+export const RequestImage = styled.div`
+  border-radius: 50%;
+  background-color: ${(props) => props.theme.colors.primary};
+  color: ${(props) => props.theme.colors.background};
+  font-weight: bold;
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;

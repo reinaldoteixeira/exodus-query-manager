@@ -8,7 +8,7 @@ import PageTitle from '../../elements/PageTitle/PageTitle';
 import Panel from '../../elements/Panel/Panel';
 import RequestForm from '../../modules/RequestForm';
 import api from '../../../services/api';
-import Loader from '../../modules/Loader';
+import Loader from '../../elements/Loader';
 import { useRouter } from 'next/router';
 import { useAuth } from '../../../hooks/auth';
 
@@ -73,7 +73,7 @@ const RequestCreate: React.FC = () => {
 
         const requestId = response.data.id;
 
-        router.push(`/${requestId}`);
+        router.push(`/requests/${requestId}`);
       } catch (err) {
         console.log(`ERROR: ${err}`);
       }

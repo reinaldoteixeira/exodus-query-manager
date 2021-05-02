@@ -23,9 +23,6 @@ export const authMiddleware = async (
 
     next();
   });
-
-  try {
-  } catch (err) {}
 };
 
 export const errorMiddleware = (

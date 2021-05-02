@@ -1,18 +1,52 @@
 import { Container, Col, Dropdown, Row, Table, Button } from 'react-bootstrap';
 
 import { useRouter } from 'next/router';
+import React, { useCallback, useState } from 'react';
 
-import { ThStatus, ThReviewers } from './styles';
+import { ResponseRequest } from '../../../@types';
 
+import { ThStatus } from './styles';
+
+import useFetch from '../../../hooks/useFetch';
+
+import Loader from '../../elements/Loader';
 import PageTitle from '../../elements/PageTitle/PageTitle';
 import RequestRow from '../../elements/RequestRow';
+import Paginate from '../../elements/Paginate';
 
 const Requests: React.FC = () => {
   const router = useRouter();
 
-  const handleCreate = () => {
+  const [filterStatus, setFilterStatus] = useState(0);
+  const filterTake = 10;
+  const [filterSkip, setFilterSkip] = useState(0);
+  const [activePage, setActivePage] = useState(1);
+
+  const handleCreate = useCallback(() => {
     router.push(`/requests/create`);
-  };
+  }, []);
+
+  const handleSetFilter = useCallback(
+    (status: number) => (
+      event: React.MouseEvent<HTMLButtonElement, MouseEvent>
+    ) => {
+      setFilterStatus(status);
+    },
+    []
+  );
+
+  const { data } = useFetch<ResponseRequest>(
+    `requests/list?status=${filterStatus}&take=${filterTake}&skip=${filterSkip}`
+  );
+
+  const requestsData = data?.data;
+  const total = data?.total;
+
+  console.log(requestsData);
+
+  if (!requestsData) {
+    return <Loader />;
+  }
 
   return (
     <Container fluid className="p-0">
@@ -22,17 +56,21 @@ const Requests: React.FC = () => {
         </Col>
         <Col className="d-flex align-items-center justify-content-end">
           <Dropdown className="mr-2">
-            <Dropdown.Toggle size="sm" variant="primary">
+            <Dropdown.Toggle size="sm" variant="secondary">
               Filter
             </Dropdown.Toggle>
             <Dropdown.Menu>
-              <Dropdown.Item>Waiting</Dropdown.Item>
-              <Dropdown.Item>Queued</Dropdown.Item>
-              <Dropdown.Item>Deny</Dropdown.Item>
-              <Dropdown.Item>Executed</Dropdown.Item>
+              <Dropdown.Item onClick={handleSetFilter(0)}>
+                Waiting
+              </Dropdown.Item>
+              <Dropdown.Item onClick={handleSetFilter(1)}>Queued</Dropdown.Item>
+              <Dropdown.Item onClick={handleSetFilter(2)}>Deny</Dropdown.Item>
+              <Dropdown.Item onClick={handleSetFilter(3)}>
+                Executed
+              </Dropdown.Item>
             </Dropdown.Menu>
           </Dropdown>
-          <Button variant="secondary" size="sm" onClick={handleCreate}>
+          <Button variant="primary" size="sm" onClick={handleCreate}>
             Create pull request
           </Button>
         </Col>
@@ -44,19 +82,23 @@ const Requests: React.FC = () => {
               <tr>
                 <th>Summary</th>
                 <ThStatus>Status</ThStatus>
-                <ThReviewers>Reviewers</ThReviewers>
               </tr>
             </thead>
             <tbody>
-              <RequestRow
-                id="01F3DAT3EZN8BBDNCNYQKZKWKC"
-                requesterImage="https://instagram.fbau4-1.fna.fbcdn.net/v/t51.2885-19/s150x150/131076851_225113118993537_3994758217496714008_n.jpg?tp=1&_nc_ht=instagram.fbau4-1.fna.fbcdn.net&_nc_ohc=K5uZoi2xS7sAX-GztvP&edm=AIQHJ4wAAAAA&ccb=7-4&oh=ee259bab71c6a66e78fa869d467a2a39&oe=609E7688&_nc_sid=7b02f1https://instagram.fbau4-1.fna.fbcdn.net/v/t51.2885-19/s150x150/131076851_225113118993537_3994758217496714008_n.jpg?tp=1&_nc_ht=instagram.fbau4-1.fna.fbcdn.net&_nc_ohc=K5uZoi2xS7sAX-GztvP&edm=AIQHJ4wAAAAA&ccb=7-4&oh=ee259bab71c6a66e78fa869d467a2a39&oe=609E7688&_nc_sid=7b02f1"
-                details="Admin -#01F3DAT3EZN8BBDNCNYQKZKWKC, created 16/04/2021 09:34, updated 16/04/2021 09:34"
-              ></RequestRow>
+              {requestsData.map((request, index) => {
+                return <RequestRow key={index} request={request}></RequestRow>;
+              })}
             </tbody>
           </Table>
         </Col>
       </Row>
+      <Paginate
+        total={total}
+        filterTake={filterTake}
+        activePage={activePage}
+        setFilterSkip={setFilterSkip}
+        setActivePage={setActivePage}
+      />
     </Container>
   );
 };

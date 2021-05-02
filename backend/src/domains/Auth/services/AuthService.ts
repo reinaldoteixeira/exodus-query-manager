@@ -22,7 +22,10 @@ class AuthService {
     const userRepository = getCustomRepository(UsersRepository);
 
     const userAlreadyExists = await userRepository.findOne({
-      email,
+      select: ['id', 'email', 'name', 'role', 'password'],
+      where: {
+        email,
+      },
     });
 
     if (!userAlreadyExists) {
@@ -42,6 +45,8 @@ class AuthService {
     }
 
     const token = jwt.sign(email, process.env.TOKEN_SECRET);
+
+    delete userAlreadyExists.password;
 
     return {
       success: true,

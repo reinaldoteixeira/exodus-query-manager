@@ -30,3 +30,22 @@ export const createMiddleware = async (
     throw new CustomError(err.message, 422);
   }
 };
+
+export const listMiddleware = async (
+  request: Request,
+  response: Response,
+  next: NextFunction
+) => {
+  const schema = Yup.object().shape({
+    status: Yup.number(),
+    take: Yup.number().required(),
+    skip: Yup.number().required(),
+  });
+
+  try {
+    await schema.validate(request.query);
+    return next();
+  } catch (err) {
+    throw new CustomError(err.message, 422);
+  }
+};

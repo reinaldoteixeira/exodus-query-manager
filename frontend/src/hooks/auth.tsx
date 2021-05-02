@@ -10,7 +10,7 @@ import { useRouter } from 'next/router';
 
 import AccessDenied from '../components/templates/AccessDenied/AccessDenied';
 import api from '../services/api';
-import Loader from '../components/modules/Loader';
+import Loader from '../components/elements/Loader';
 
 interface User {
   id: string;
@@ -74,8 +74,8 @@ export const AuthProvider: React.FC = ({ children }) => {
     Cookies.remove('@exodus:token');
     Cookies.remove('@exodus:user');
     setUser(null);
-    setAuthenticated(false);
     router.push('/login');
+    setAuthenticated(false);
   };
 
   var publicRouters = ['/login'];

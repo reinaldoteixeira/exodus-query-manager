@@ -1,13 +1,22 @@
-import { Column, CreateDateColumn, Entity, PrimaryColumn } from 'typeorm';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinColumn,
+  OneToOne,
+  PrimaryColumn,
+} from 'typeorm';
 import { ulid } from 'ulid';
+import { User } from '../../User/models/User';
 
 @Entity('requests')
 class Request {
   @PrimaryColumn()
   readonly id: string;
 
-  @Column()
-  user_id: string;
+  @OneToOne(() => User)
+  @JoinColumn({ name: 'user' })
+  user: User;
 
   @Column()
   host: string;
@@ -28,7 +37,7 @@ class Request {
   ddl_command: string;
 
   @Column()
-  status: Number;
+  status: number;
 
   @CreateDateColumn()
   created_at: Date;

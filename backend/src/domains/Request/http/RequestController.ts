@@ -15,6 +15,21 @@ class RequestController {
 
     throw new CustomError(created.message);
   }
+
+  async list(request: Request, response: Response) {
+    const requestService = new RequestService();
+
+    const listed = await requestService.list(request.query);
+
+    if (listed.success) {
+      return response.status(200).json({
+        data: listed.data,
+        total: listed.total,
+      });
+    }
+
+    throw new CustomError(listed.message);
+  }
 }
 
 export default RequestController;

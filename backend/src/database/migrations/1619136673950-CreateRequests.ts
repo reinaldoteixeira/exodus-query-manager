@@ -12,7 +12,7 @@ export class CreateRequests1619136673950 implements MigrationInterface {
             isPrimary: true,
           },
           {
-            name: 'user_id',
+            name: 'user',
             type: 'varchar',
           },
           {

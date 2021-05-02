@@ -194,12 +194,15 @@ const RequestForm: React.FC<UserFormProps> = ({
             sm="12"
             className="d-flex align-items-center justify-content-end mt-3"
           >
-            <Button type="submit" className="mr-2">
-              Save
-            </Button>
-            <Button type="button" variant="secondary" onClick={handleCancel}>
+            <Button
+              type="button"
+              className="mr-2"
+              variant="secondary"
+              onClick={handleCancel}
+            >
               Cancel
             </Button>
+            <Button type="submit">Save</Button>
           </Col>
         </Row>
       </Container>

@@ -1,8 +1,10 @@
+// https://encycolorpedia.pt/00a5a7
+
 const theme = {
   colors: {
     background: '#f8f9fc',
-    primary: '#262d31',
-    secondary: '#8f7ff8',
+    primary: '#00a5a7',
+    secondary: '#111111',
     success: '#2ed47a',
     danger: '#ef665b',
     warning: '#fbb846',

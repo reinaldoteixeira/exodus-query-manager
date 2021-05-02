@@ -24,7 +24,6 @@ const UserForm: React.FC<UserFormProps> = ({
   errors,
   user,
 }) => {
-
   const roleOptions = [
     {
       label: 'Admin',
@@ -48,10 +47,12 @@ const UserForm: React.FC<UserFormProps> = ({
     {
       label: 'arktis',
       value: 'arktis',
-    }
+    },
   ];
 
-  const handleChangeInput = ({ target }: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChangeInput = ({
+    target,
+  }: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = target;
     onChange(name, value);
   };
@@ -61,10 +62,7 @@ const UserForm: React.FC<UserFormProps> = ({
       <Container fluid className="p-0">
         <Row>
           <Col sm="12" lg="6">
-            <FormGroup
-              hasError={!!errors.email}
-              errorMessage={errors.email}
-            >
+            <FormGroup hasError={!!errors.email} errorMessage={errors.email}>
               <Form.Label>Email</Form.Label>
               <Form.Control
                 type="email"
@@ -76,10 +74,7 @@ const UserForm: React.FC<UserFormProps> = ({
             </FormGroup>
           </Col>
           <Col sm="12" lg="6">
-            <FormGroup
-              hasError={!!errors.name}
-              errorMessage={errors.name}
-            >
+            <FormGroup hasError={!!errors.name} errorMessage={errors.name}>
               <Form.Label>Name</Form.Label>
               <Form.Control
                 type="text"
@@ -106,10 +101,7 @@ const UserForm: React.FC<UserFormProps> = ({
             </FormGroup>
           </Col>
           <Col sm="12" lg="6">
-            <FormGroup
-              hasError={!!errors.role}
-              errorMessage={errors.role}
-            >
+            <FormGroup hasError={!!errors.role} errorMessage={errors.role}>
               <Form.Label>Role</Form.Label>
               <Select
                 instanceId="roleSelect"
@@ -121,10 +113,7 @@ const UserForm: React.FC<UserFormProps> = ({
             </FormGroup>
           </Col>
           <Col sm="12" lg="6">
-            <FormGroup
-              hasError={!!errors.groups}
-              errorMessage={errors.groups}
-            >
+            <FormGroup hasError={!!errors.groups} errorMessage={errors.groups}>
               <Form.Label>Groups</Form.Label>
               <Select
                 instanceId="groupsSelect"
@@ -136,19 +125,14 @@ const UserForm: React.FC<UserFormProps> = ({
               />
             </FormGroup>
           </Col>
-          <Col sm="12" className="d-flex align-items-center justify-content-end mt-3">
-            <Button
-              type="submit"
-              className="mr-2"
-            >
-              Save
-            </Button>
-            <Button
-              type="button"
-              variant="secondary"
-            >
+          <Col
+            sm="12"
+            className="d-flex align-items-center justify-content-end mt-3"
+          >
+            <Button type="button" variant="secondary" className="mr-2">
               Cancel
             </Button>
+            <Button type="submit">Save</Button>
           </Col>
         </Row>
       </Container>
