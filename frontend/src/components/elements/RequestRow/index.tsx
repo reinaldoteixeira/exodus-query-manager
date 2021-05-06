@@ -31,7 +31,24 @@ const RequestRow: React.FC<RowProps> = ({ request }) => {
   };
 
   const getFirstCharRequester = () => {
-    return request.user.name.substr(0, 1).toUpperCase();
+    let name = request.user.name;
+    let char = '';
+
+    let nameArray = name.split(' ');
+
+    let letters = 0;
+
+    for (const index in nameArray) {
+      if (letters == 2) {
+        break;
+      }
+
+      char += nameArray[index].substr(0, 1).toUpperCase();
+
+      letters++;
+    }
+
+    return char;
   };
 
   return (
@@ -41,7 +58,7 @@ const RequestRow: React.FC<RowProps> = ({ request }) => {
           <RequestImage>{getFirstCharRequester()}</RequestImage>
           <Col className="d-flex flex-column">
             <RequestTitle onClick={() => showRequest()}>
-              query-{requestId}
+              {request.description}
             </RequestTitle>
             <RequestDescription>{details()}</RequestDescription>
           </Col>

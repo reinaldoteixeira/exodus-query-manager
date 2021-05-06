@@ -8,8 +8,8 @@ export default createGlobalStyle`
 }
 
 body {
-  background-color: ${props => props.theme.colors.background};
-  color: ${props => props.theme.colors.text};
+  background-color: ${(props) => props.theme.colors.background};
+  color: ${(props) => props.theme.colors.text};
   font-family: Roboto, sans-serif;
 }
 
@@ -18,21 +18,22 @@ body {
 }
 
 input:focus {
-  border-color: ${props => props.theme.colors.primary};
-  box-shadow: 0 .125rem .25rem ${props => props.theme.colors.primary}30 !important;
-  color: ${props => props.theme.colors.text} !important;
+  border-color: ${(props) => props.theme.colors.primary};
+  box-shadow: 0 .125rem .25rem ${(props) =>
+    props.theme.colors.primary}30 !important;
+  color: ${(props) => props.theme.colors.text} !important;
 }
 
 .form-control.is-invalid {
-  border-color: ${props => props.theme.colors.danger};
+  border-color: ${(props) => props.theme.colors.danger};
 }
 
 table {
-  color: ${props => props.theme.colors.textDark} !important;
+  color: ${(props) => props.theme.colors.textDark} !important;
 }
 
 ::placeholder {
-  color: ${props => props.theme.colors.text}95 !important;
+  color: ${(props) => props.theme.colors.text}95 !important;
 }
 
 button:focus {
@@ -44,61 +45,75 @@ button:not(:disabled):not(.disabled):active:focus {
 }
 
 button.btn-primary {
-  background: ${props => props.theme.colors.primary} !important;
-  border-color: ${props => props.theme.colors.primary} !important;
-  box-shadow: 0 .125rem .25rem ${props => props.theme.colors.primary}75 !important;
+  background: ${(props) => props.theme.colors.primary} !important;
+  border-color: ${(props) => props.theme.colors.primary} !important;
+  box-shadow: 0 .125rem .25rem ${(props) =>
+    props.theme.colors.primary}75 !important;
 }
 
 button.btn-secondary {
-  background: ${props => props.theme.colors.secondary} !important;
-  border-color: ${props => props.theme.colors.secondary} !important;
-  box-shadow: 0 .125rem .25rem ${props => props.theme.colors.secondary}75 !important;
+  background: ${(props) => props.theme.colors.secondary} !important;
+  border-color: ${(props) => props.theme.colors.secondary} !important;
+  box-shadow: 0 .125rem .25rem ${(props) =>
+    props.theme.colors.secondary}75 !important;
 }
 
 button.btn-success {
-  background: ${props => props.theme.colors.success} !important;
-  border-color: ${props => props.theme.colors.success} !important;
-  box-shadow: 0 .125rem .25rem ${props => props.theme.colors.success}75 !important;
+  background: ${(props) => props.theme.colors.success} !important;
+  border-color: ${(props) => props.theme.colors.success} !important;
+  box-shadow: 0 .125rem .25rem ${(props) =>
+    props.theme.colors.success}75 !important;
 }
 
 button.btn-warning {
-  background: ${props => props.theme.colors.warning} !important;
-  border-color: ${props => props.theme.colors.warning} !important;
-  box-shadow: 0 .125rem .25rem ${props => props.theme.colors.warning}75 !important;
+  background: ${(props) => props.theme.colors.warning} !important;
+  border-color: ${(props) => props.theme.colors.warning} !important;
+  box-shadow: 0 .125rem .25rem ${(props) =>
+    props.theme.colors.warning}75 !important;
 }
 
 button.btn-danger {
-  background: ${props => props.theme.colors.danger} !important;
-  border-color: ${props => props.theme.colors.danger} !important;
-  box-shadow: 0 .125rem .25rem ${props => props.theme.colors.danger}75 !important;
+  background: ${(props) => props.theme.colors.danger} !important;
+  border-color: ${(props) => props.theme.colors.danger} !important;
+  box-shadow: 0 .125rem .25rem ${(props) =>
+    props.theme.colors.danger}75 !important;
 }
 
 button.btn-light {
-  background: ${props => props.theme.colors.light} !important;
-  border-color: ${props => props.theme.colors.light} !important;
+  background: ${(props) => props.theme.colors.light} !important;
+  border-color: ${(props) => props.theme.colors.light} !important;
 }
 
 .bg-primary {
-  background: ${props => props.theme.colors.primary} !important;
+  background: ${(props) => props.theme.colors.primary} !important;
 }
 
 .bg-secondary {
-  background: ${props => props.theme.colors.secondary} !important;
+  background: ${(props) => props.theme.colors.secondary} !important;
 }
 
 .bg-success {
-  background: ${props => props.theme.colors.success} !important;
+  background: ${(props) => props.theme.colors.success} !important;
 }
 
 .bg-warning {
-  background: ${props => props.theme.colors.warning} !important;
+  background: ${(props) => props.theme.colors.warning} !important;
 }
 
 .bg-danger {
-  background: ${props => props.theme.colors.danger} !important;
+  background: ${(props) => props.theme.colors.danger} !important;
 }
 
 .bg-light {
-  background: ${props => props.theme.colors.light} !important;
+  background: ${(props) => props.theme.colors.light} !important;
 }
+
+a {
+  color: ${(props) => props.theme.colors.primary};
+}
+
+a:hover {
+  color: ${(props) => props.theme.colors.primary};
+}
+
 `;

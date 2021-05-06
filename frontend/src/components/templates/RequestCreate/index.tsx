@@ -28,8 +28,8 @@ const RequestCreate: React.FC = () => {
   const [showLoader, setShowLoader] = useState(false);
   const { user } = useAuth();
 
-  const handleChange = async (key: string, value: any) => {
-    await setRequest({
+  const handleChange = (key: string, value: any) => {
+    setRequest({
       ...request,
       [key]: value,
     });

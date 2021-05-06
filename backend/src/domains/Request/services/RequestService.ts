@@ -1,35 +1,18 @@
+import mysql from 'mysql';
+import util from 'util';
+
 import { getCustomRepository } from 'typeorm';
 import { UsersRepository } from '../../User/repositories/UsersRepository';
 import { RequestsRepository } from '../repositories/RequestsRepository';
 
-interface CreateType {
-  userId: string;
-  host: string;
-  ddl: string;
-  databases: string;
-  description: string;
-  timeToRun: string;
-  schedule: string;
-}
-
-interface QueryType {
-  status?: number;
-  take: number;
-  skip: number;
-}
-
-interface ResponseType {
-  success: boolean;
-  data?: object;
-  message?: string;
-}
-
-interface ResponseListType {
-  success: boolean;
-  data?: object;
-  total?: number;
-  message?: string;
-}
+import {
+  CreateType,
+  DetailType,
+  ExplainType,
+  ListType,
+  ResponseListType,
+  ResponseType,
+} from '../@types';
 
 class RequestService {
   async create(payload: CreateType): Promise<ResponseType> {
@@ -71,20 +54,20 @@ class RequestService {
       };
     }
   }
-  async list(query: QueryType): Promise<ResponseListType> {
+
+  async list(query: ListType): Promise<ResponseListType> {
     try {
       const requestRepository = getCustomRepository(RequestsRepository);
 
-      const { take, skip } = query;
-
-      delete query.take;
-      delete query.skip;
+      let { take, skip, status } = query;
 
       const [data, total] = await requestRepository.findAndCount({
-        where: query,
+        where: {
+          status: parseInt(status),
+        },
         relations: ['user'],
-        take: take,
-        skip: skip,
+        take: parseInt(take),
+        skip: parseInt(skip),
       });
 
       return {
@@ -96,6 +79,73 @@ class RequestService {
       return {
         success: false,
         message: err.message,
+      };
+    }
+  }
+
+  async detail(params: DetailType): Promise<ResponseType> {
+    try {
+      const { id } = params;
+
+      const requestRepository = getCustomRepository(RequestsRepository);
+
+      const request = await requestRepository.findOne({
+        where: {
+          id,
+        },
+        relations: ['user'],
+      });
+
+      return {
+        success: true,
+        data: request,
+      };
+    } catch (err) {
+      return {
+        success: false,
+        message: err.message,
+      };
+    }
+  }
+
+  async explain(payload: ExplainType): Promise<ResponseType> {
+    try {
+      const { id, database } = payload;
+
+      const requestRepository = getCustomRepository(RequestsRepository);
+
+      const request = await requestRepository.findOne({
+        id,
+      });
+
+      var connection = await mysql.createConnection({
+        host: 'localhost',
+        port: 3306,
+        user: 'root',
+        password: 'root',
+        database: database,
+      });
+
+      await connection.connect();
+
+      const query = util.promisify(connection.query).bind(connection);
+
+      const sql = `EXPLAIN ${request.ddl_command}`;
+
+      console.log(sql);
+
+      const rows = await query(sql);
+
+      await connection.end();
+
+      return {
+        success: true,
+        data: rows,
+      };
+    } catch (err) {
+      return {
+        success: false,
+        message: err,
       };
     }
   }

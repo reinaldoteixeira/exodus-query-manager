@@ -40,6 +40,10 @@ const timeToRunOptions = [
     label: 'Schedule time',
     value: 'schedule',
   },
+  {
+    label: 'Manual',
+    value: 'manual',
+  },
 ];
 
 const databasesOptions = [
@@ -123,7 +127,7 @@ const RequestForm: React.FC<UserFormProps> = ({
               <Select
                 instanceId="databases"
                 name="databases"
-                onChange={(value) => onChange('databases', value)}
+                onChange={(value: string) => onChange('databases', value)}
                 options={databasesOptions}
                 isMulti
                 isInvalid={!!errors.databases}

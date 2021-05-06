@@ -10,12 +10,12 @@ import '../styles/css/bootstrap.css';
 
 const App: React.FC<AppProps> = ({ Component, pageProps }) => {
   return (
-    <AuthProvider>
-      <ThemeProvider theme={theme}>
+    <ThemeProvider theme={theme}>
+      <AuthProvider>
         <Component {...pageProps} />
         <GlobalStyle />
-      </ThemeProvider>
-    </AuthProvider>
+      </AuthProvider>
+    </ThemeProvider>
   );
 };
 

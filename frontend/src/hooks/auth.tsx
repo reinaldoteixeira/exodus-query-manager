@@ -1,14 +1,7 @@
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import Cookies from 'js-cookie';
 import { useRouter } from 'next/router';
 
-import AccessDenied from '../components/templates/AccessDenied/AccessDenied';
 import api from '../services/api';
 import Loader from '../components/elements/Loader';
 
@@ -73,8 +66,8 @@ export const AuthProvider: React.FC = ({ children }) => {
   const signOut = () => {
     Cookies.remove('@exodus:token');
     Cookies.remove('@exodus:user');
-    setUser(null);
     router.push('/login');
+    setUser(null);
     setAuthenticated(false);
   };
 
@@ -85,7 +78,8 @@ export const AuthProvider: React.FC = ({ children }) => {
   }
 
   if (!authenticated && !publicRouters.includes(router.route)) {
-    return <AccessDenied />;
+    router.push(`/login`);
+    return <Loader />;
   }
 
   return (

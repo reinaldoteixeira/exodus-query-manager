@@ -1,6 +1,14 @@
 import { Request, Response } from 'express';
 
 import { CustomError } from '../../../errors/CustomError';
+import {
+  CustomRequest,
+  ListType,
+  DetailType,
+  ExplainQueryType,
+  ExplainParamType,
+} from '../@types';
+
 import RequestService from '../services/RequestService';
 
 class RequestController {
@@ -16,7 +24,7 @@ class RequestController {
     throw new CustomError(created.message);
   }
 
-  async list(request: Request, response: Response) {
+  async list(request: CustomRequest<any, ListType>, response: Response) {
     const requestService = new RequestService();
 
     const listed = await requestService.list(request.query);
@@ -29,6 +37,41 @@ class RequestController {
     }
 
     throw new CustomError(listed.message);
+  }
+
+  async detail(
+    request: CustomRequest<any, any, DetailType>,
+    response: Response
+  ) {
+    const requestService = new RequestService();
+
+    const getted = await requestService.detail(request.params);
+
+    if (getted.success) {
+      return response.status(200).json(getted.data);
+    }
+
+    throw new CustomError(getted.message);
+  }
+
+  async explain(
+    request: CustomRequest<any, ExplainQueryType, ExplainParamType>,
+    response: Response
+  ) {
+    const requestService = new RequestService();
+
+    const payload = {
+      ...request.query,
+      ...request.params,
+    };
+
+    const getted = await requestService.explain(payload);
+
+    if (getted.success) {
+      return response.status(200).json(getted.data);
+    }
+
+    throw new CustomError(getted.message);
   }
 }
 

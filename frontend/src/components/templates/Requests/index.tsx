@@ -71,7 +71,7 @@ const Requests: React.FC = () => {
             </Dropdown.Menu>
           </Dropdown>
           <Button variant="primary" size="sm" onClick={handleCreate}>
-            Create pull request
+            Create query request
           </Button>
         </Col>
       </Row>
