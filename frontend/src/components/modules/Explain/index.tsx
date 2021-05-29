@@ -55,7 +55,7 @@ const Explain: React.FC<ExplainProps> = ({ requestId, databases }) => {
       }
       //removerMock
 
-      setExplain(teste);
+      setExplain(explain);
       console.log(explain);
     } catch (err) {
       console.log(err);
@@ -87,7 +87,7 @@ const Explain: React.FC<ExplainProps> = ({ requestId, databases }) => {
   return (
     <Container fluid className="p-0">
       <Row>
-        <Col sm="12" lg="6">
+        <Col sm="12" lg="3">
           <label>Select Database: </label>
           <Select
             instanceId="databases"
@@ -106,7 +106,7 @@ const Explain: React.FC<ExplainProps> = ({ requestId, databases }) => {
         </RowEmpty>
       ) : (
         <>
-          <RowPie>
+          <RowPie sm="12">
             <Pie
               type="data"
               data={getPieData()}
@@ -115,10 +115,19 @@ const Explain: React.FC<ExplainProps> = ({ requestId, databases }) => {
               options={{
                 animation: false,
                 maintainAspectRatio: false,
+                plugins: {
+                  legend: {
+                    position: 'top',
+                  },
+                  title: {
+                    display: true,
+                    text: 'Explain - filtered',
+                  },
+                },
               }}
             />
           </RowPie>
-          <RowTable>
+          <RowTable sm="12">
             <Table striped bordered hover>
               <thead>
                 <tr>

@@ -94,7 +94,7 @@ const RequestForm: React.FC<UserFormProps> = ({
   const handleChangeSchedule = (target) => {
     const { name, value } = target;
     errors.schedule = null;
-    const date = moment(value).utc().format('YYYY-MM-DD HH:mm');
+    const date = moment(value).format('YYYY-MM-DD HH:mm');
     return onChange(name, date);
   };
 

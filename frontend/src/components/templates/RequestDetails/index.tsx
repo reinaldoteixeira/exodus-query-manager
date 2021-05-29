@@ -119,7 +119,7 @@ const RequestDetails: React.FC = () => {
                 <ListGroup.Item>
                   Created At:{' '}
                   <RequestInfo>
-                    {moment(request.created_at).format('DD/MM/YYYY HH:mm')}
+                    {moment(request.created_at).format('DD/MM/YYYY HH:mm:ss')}
                   </RequestInfo>
                 </ListGroup.Item>
                 <ListGroup.Item>
@@ -144,7 +144,7 @@ const RequestDetails: React.FC = () => {
                 </ListGroup.Item>
               </ListGroup>
             </Tab>
-            <Tab eventKey="ddl" title="DDL">
+            <Tab eventKey="ddl" className="tab-code" title="DDL">
               <Code>{formatSql(request.ddl_command)}</Code>
             </Tab>
             <Tab eventKey="explain" title="Explain">
