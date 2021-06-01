@@ -1,3 +1,4 @@
+import { useRouter } from 'next/router';
 import { Button, Col, Container, Form, Row } from 'react-bootstrap';
 import { Errors } from '../../../utils/getValidationErrors';
 import FormGroup from '../../elements/FormGroup/FormGroup';
@@ -6,9 +7,7 @@ import Select from '../../elements/Select/Select';
 interface User {
   email: string;
   name: string;
-  password: string;
-  role: string;
-  groups: string[];
+  role: number;
 }
 
 interface UserFormProps {
@@ -24,37 +23,38 @@ const UserForm: React.FC<UserFormProps> = ({
   errors,
   user,
 }) => {
+  const router = useRouter();
+
   const roleOptions = [
     {
       label: 'Admin',
-      value: 'admin',
+      value: 1,
     },
     {
-      label: 'Controller',
-      value: 'controller',
+      label: 'Moderator',
+      value: 2,
     },
     {
-      label: 'Reader',
-      value: 'reader',
+      label: 'Requester',
+      value: 3,
     },
   ];
 
-  const groupOptions = [
-    {
-      label: 'organic-search',
-      value: 'organic-search',
-    },
-    {
-      label: 'arktis',
-      value: 'arktis',
-    },
-  ];
+  const defaultOption = roleOptions.filter((option) => {
+    if (option.value == user?.role) {
+      return option;
+    }
+  });
 
   const handleChangeInput = ({
     target,
   }: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = target;
     onChange(name, value);
+  };
+
+  const handleCancel = () => {
+    router.push(`/users`);
   };
 
   return (
@@ -67,6 +67,7 @@ const UserForm: React.FC<UserFormProps> = ({
               <Form.Control
                 type="email"
                 name="email"
+                defaultValue={user?.email}
                 onChange={handleChangeInput}
                 placeholder="Enter the email"
                 isInvalid={!!errors.email}
@@ -79,6 +80,7 @@ const UserForm: React.FC<UserFormProps> = ({
               <Form.Control
                 type="text"
                 name="name"
+                defaultValue={user?.name}
                 onChange={handleChangeInput}
                 placeholder="Enter the name"
                 isInvalid={!!errors.name}
@@ -106,22 +108,10 @@ const UserForm: React.FC<UserFormProps> = ({
               <Select
                 instanceId="roleSelect"
                 name="role"
+                defaultValue={defaultOption}
                 onChange={({ value }) => onChange('role', value)}
                 options={roleOptions}
                 isInvalid={!!errors.role}
-              />
-            </FormGroup>
-          </Col>
-          <Col sm="12" lg="6">
-            <FormGroup hasError={!!errors.groups} errorMessage={errors.groups}>
-              <Form.Label>Groups</Form.Label>
-              <Select
-                instanceId="groupsSelect"
-                name="groups"
-                onChange={(event) => onChange('groups', event)}
-                options={groupOptions}
-                isMulti
-                isInvalid={!!errors.groups}
               />
             </FormGroup>
           </Col>
@@ -129,7 +119,12 @@ const UserForm: React.FC<UserFormProps> = ({
             sm="12"
             className="d-flex align-items-center justify-content-end mt-3"
           >
-            <Button type="button" variant="secondary" className="mr-2">
+            <Button
+              type="button"
+              variant="secondary"
+              className="mr-2"
+              onClick={handleCancel}
+            >
               Cancel
             </Button>
             <Button type="submit">Save</Button>

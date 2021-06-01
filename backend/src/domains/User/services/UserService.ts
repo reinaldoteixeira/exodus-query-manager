@@ -1,20 +1,14 @@
 import bcrypt from 'bcryptjs';
 import { getCustomRepository } from 'typeorm';
+import {
+  ResponseListType,
+  IdParamType,
+  EditBodyType,
+  CreateType,
+  ResponseType,
+} from '../@types';
 
 import { UsersRepository } from '../repositories/UsersRepository';
-
-interface CreateType {
-  name: string;
-  email: string;
-  role: string;
-  password: string;
-}
-
-interface ResponseType {
-  success: boolean;
-  data?: object;
-  message?: string;
-}
 
 class UserService {
   async create(payload: CreateType): Promise<ResponseType> {
@@ -49,6 +43,72 @@ class UserService {
       return {
         success: true,
         data: userCreated,
+      };
+    } catch (err) {
+      return {
+        success: false,
+        message: err.message,
+      };
+    }
+  }
+
+  async list(): Promise<ResponseListType> {
+    try {
+      const userRepository = getCustomRepository(UsersRepository);
+
+      const users = await userRepository.find();
+
+      return {
+        success: true,
+        data: users,
+      };
+    } catch (err) {
+      return {
+        success: false,
+        message: err.message,
+      };
+    }
+  }
+
+  async detail(params: IdParamType): Promise<ResponseType> {
+    try {
+      const { id } = params;
+
+      const userRepository = getCustomRepository(UsersRepository);
+
+      const user = await userRepository.findOne({
+        id,
+      });
+
+      return {
+        success: true,
+        data: user,
+      };
+    } catch (err) {
+      return {
+        success: false,
+        message: err.message,
+      };
+    }
+  }
+
+  async edit(
+    params: IdParamType,
+    payload: EditBodyType
+  ): Promise<ResponseType> {
+    try {
+      const { id } = params;
+
+      const userRepository = getCustomRepository(UsersRepository);
+
+      const user = await userRepository.save({
+        id,
+        ...payload,
+      });
+
+      return {
+        success: true,
+        data: user,
       };
     } catch (err) {
       return {

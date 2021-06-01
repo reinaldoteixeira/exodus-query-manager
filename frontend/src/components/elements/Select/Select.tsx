@@ -5,17 +5,14 @@ interface SelectProps extends OptionTypeBase {
   isInvalid?: boolean;
 }
 
-const Select: React.FC<SelectProps> = ({
-  isInvalid,
-  ...props
-}) => (
+const Select: React.FC<SelectProps> = ({ isInvalid, ...props }) => (
   <ReactSelect
-    theme={theme => ({
+    theme={(theme) => ({
       ...theme,
       colors: {
         ...theme.colors,
         primary: mainTheme.colors.primary,
-      }
+      },
     })}
     styles={{
       control: (base) => {
@@ -26,7 +23,7 @@ const Select: React.FC<SelectProps> = ({
           ...base,
           borderColor: mainTheme.colors.danger,
         };
-      }
+      },
     }}
     {...props}
   />

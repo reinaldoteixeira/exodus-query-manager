@@ -1,18 +1,17 @@
 import { Container, Col, Dropdown, Row, Table, Button } from 'react-bootstrap';
 
 import { useRouter } from 'next/router';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import { ResponseRequest } from '../../../@types';
 
 import { ThStatus } from './styles';
 
-import useFetch from '../../../hooks/useFetch';
-
 import Loader from '../../elements/Loader';
 import PageTitle from '../../elements/PageTitle/PageTitle';
 import RequestRow from '../../elements/RequestRow';
 import Paginate from '../../elements/Paginate';
+import api from '../../../services/api';
 
 const Requests: React.FC = () => {
   const router = useRouter();
@@ -22,27 +21,39 @@ const Requests: React.FC = () => {
   const [filterSkip, setFilterSkip] = useState(0);
   const [activePage, setActivePage] = useState(1);
 
+  const [requestsData, setRequestsData] = useState([]);
+  const [total, setTotal] = useState(0);
+
   const handleCreate = useCallback(() => {
     router.push(`/requests/create`);
   }, []);
 
   const handleSetFilter = useCallback(
-    (status: number) => (
-      event: React.MouseEvent<HTMLButtonElement, MouseEvent>
-    ) => {
-      setFilterStatus(status);
-    },
+    (status: number) =>
+      (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+        setFilterStatus(status);
+      },
     []
   );
 
-  const { data } = useFetch<ResponseRequest>(
-    `requests/list?status=${filterStatus}&take=${filterTake}&skip=${filterSkip}`
-  );
+  useEffect(() => {
+    if (!requestsData.length) {
+      loadData();
+    }
+  }, []);
 
-  const requestsData = data?.data;
-  const total = data?.total;
+  const loadData = async () => {
+    const response = await api.get<ResponseRequest>(
+      `requests/list?status=${filterStatus}&take=${filterTake}&skip=${filterSkip}`
+    );
 
-  console.log(requestsData);
+    const data = response?.data;
+    const requests = data?.data;
+    const total = data?.total;
+
+    setRequestsData(requests);
+    setTotal(total);
+  };
 
   if (!requestsData) {
     return <Loader />;

@@ -21,3 +21,9 @@ export type ResponseRequest = {
   data: RequestType[];
   total: number;
 };
+
+export type UserType = {
+  name: string;
+  email: string;
+  role: number;
+};

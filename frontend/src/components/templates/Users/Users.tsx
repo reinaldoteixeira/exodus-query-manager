@@ -1,21 +1,45 @@
-import { useCallback } from 'react';
-import Link from 'next/link';
+import { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import BootstrapTable, { ColumnDescription } from 'react-bootstrap-table-next';
 import { Button, Container, Col, Row } from 'react-bootstrap';
+import Link from 'next/link';
+
 import PageTitle from '../../elements/PageTitle/PageTitle';
 import Panel from '../../elements/Panel/Panel';
+import api from '../../../services/api';
+import Loader from '../../elements/Loader';
+import { UserType } from '../../../@types';
 
 const UsersPage: React.FC = () => {
   const router = useRouter();
+
+  const [usersData, setUsersData] = useState([]);
+
+  useEffect(() => {
+    if (!usersData.length) {
+      loadData();
+    }
+  }, []);
+
+  const loadData = async () => {
+    const response = await api.get<UserType[]>(`users/list`);
+
+    const data = response?.data;
+
+    setUsersData(data);
+  };
+
+  if (!usersData) {
+    return <Loader />;
+  }
 
   const columns: ColumnDescription<any, any>[] = [
     {
       dataField: 'email',
       text: 'Email',
-      formatter: (cell) => (
-        <Link href={`/users/${cell}`}>{cell}</Link>
-      ),
+      formatter: (cell, user) => {
+        return <Link href={`/users/${user.id}`}>{cell}</Link>;
+      },
     },
     {
       dataField: 'name',
@@ -25,13 +49,16 @@ const UsersPage: React.FC = () => {
       dataField: 'role',
       text: 'Role',
       classes: 'text-capitalize',
-    },
-  ];
-  const data = [
-    {
-      email: 'user@teste.com',
-      name: 'Username',
-      role: 'admin',
+      formatter: (role) => {
+        switch (role) {
+          case 1:
+            return 'Admin';
+          case 2:
+            return 'Moderator';
+          case 3:
+            return 'Requester';
+        }
+      },
     },
   ];
 
@@ -49,10 +76,7 @@ const UsersPage: React.FC = () => {
           />
         </Col>
         <Col className="d-flex justify-content-end">
-          <Button
-            size="sm"
-            onClick={handleCreate}
-          >
+          <Button size="sm" onClick={handleCreate}>
             Create user
           </Button>
         </Col>
@@ -65,7 +89,7 @@ const UsersPage: React.FC = () => {
               keyField="email"
               bordered={false}
               columns={columns}
-              data={data}
+              data={usersData}
             />
           </Panel>
         </Col>

@@ -31,7 +31,6 @@ const RequestDetails: React.FC = () => {
 
   useEffect(() => {
     if (!request && requestId) {
-      console.log('loadData');
       loadData(requestId);
     }
   }, [requestId]);

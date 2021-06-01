@@ -1,16 +1,19 @@
+import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { Col, Container, Row } from 'react-bootstrap';
 import * as Yup from 'yup';
 import getValidationErrors, {
   Errors,
 } from '../../../utils/getValidationErrors';
+
+import { useAuth } from '../../../hooks/auth';
+import api from '../../../services/api';
+
 import PageTitle from '../../elements/PageTitle/PageTitle';
 import Panel from '../../elements/Panel/Panel';
 import RequestForm from '../../modules/RequestForm';
-import api from '../../../services/api';
+import Breadcrumb from '../../elements/Breadcrumb';
 import Loader from '../../elements/Loader';
-import { useRouter } from 'next/router';
-import { useAuth } from '../../../hooks/auth';
 
 interface RequestState {
   host: string;
@@ -22,11 +25,13 @@ interface RequestState {
 }
 
 const RequestCreate: React.FC = () => {
+  const router = useRouter();
+
+  const { user } = useAuth();
+
   const [errors, setErrors] = useState({} as Errors);
   const [request, setRequest] = useState({} as RequestState);
-  const router = useRouter();
   const [showLoader, setShowLoader] = useState(false);
-  const { user } = useAuth();
 
   const handleChange = (key: string, value: any) => {
     setRequest({
@@ -87,6 +92,19 @@ const RequestCreate: React.FC = () => {
     }
   };
 
+  const breadcrumb = [
+    {
+      active: true,
+      href: '/',
+      text: 'Home',
+    },
+    {
+      active: true,
+      href: `/requests/create`,
+      text: 'New request',
+    },
+  ];
+
   return (
     <Container fluid className="p-0">
       {showLoader && <Loader />}
@@ -96,6 +114,7 @@ const RequestCreate: React.FC = () => {
             title="New request"
             description="Create new pull request"
           />
+          <Breadcrumb items={breadcrumb} />
         </Col>
       </Row>
 
