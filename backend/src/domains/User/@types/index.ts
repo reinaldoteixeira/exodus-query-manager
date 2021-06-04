@@ -19,7 +19,7 @@ export interface ResponseListType {
 export interface CreateType {
   name: string;
   email: string;
-  role: string;
+  role: number;
   password: string;
 }
 

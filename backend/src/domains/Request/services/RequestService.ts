@@ -119,10 +119,10 @@ class RequestService {
       });
 
       var connection = await mysql.createConnection({
-        host: 'localhost',
-        port: 3306,
-        user: 'root',
-        password: 'root',
+        host: process.env.DB_EXPLAIN_HOST,
+        port: process.env.DB_EXPLAIN_PORT,
+        user: process.env.DB_EXPLAIN_USERNAME,
+        password: process.env.DB_EXPLAIN_PASSWORD,
         database: database,
       });
 

@@ -16,6 +16,7 @@ import { RowPanel, Code, RequestInfo } from './styles';
 
 import api from '../../../services/api';
 import { RequestType } from '../../../@types';
+import { useAuth } from '../../../hooks/auth';
 
 interface DatabaseType {
   label: string;
@@ -28,6 +29,8 @@ const RequestDetails: React.FC = () => {
 
   const router = useRouter();
   const requestId = router.query.id;
+
+  const { user } = useAuth();
 
   useEffect(() => {
     if (!request && requestId) {
@@ -146,10 +149,13 @@ const RequestDetails: React.FC = () => {
             <Tab eventKey="ddl" className="tab-code" title="DDL">
               <Code>{formatSql(request.ddl_command)}</Code>
             </Tab>
-            <Tab eventKey="explain" title="Explain">
-              <Explain requestId={requestId} databases={request.databases} />
-            </Tab>
-            <Tab eventKey="comments" title="Comments"></Tab>
+            {user.role <= 2 ? (
+              <Tab eventKey="explain" title="Explain">
+                <Explain requestId={requestId} databases={request.databases} />
+              </Tab>
+            ) : (
+              ''
+            )}
           </Tabs>
         </Panel>
       </RowPanel>

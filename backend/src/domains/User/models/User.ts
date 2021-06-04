@@ -13,7 +13,7 @@ class User {
   email: string;
 
   @Column()
-  role: string;
+  role: number;
 
   @Column({ select: false })
   password: string;

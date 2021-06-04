@@ -5,7 +5,9 @@
   "scripts": {
     "dev": "ts-node-dev --transpile-only --ignore-watch node_nodules src/server.ts",
     "typeorm": "ts-node-dev node_modules/typeorm/cli.js",
-    "migrate": "ts-node-dev node_modules/typeorm/cli.js migration:run"
+    "typeorm:migrate": "ts-node-dev node_modules/typeorm/cli.js migration:run",
+    "typeorm:seed-config": "ts-node ./node_modules/typeorm-seeding/dist/cli.js config",
+    "typeorm:seed-run": "ts-node ./node_modules/typeorm-seeding/dist/cli.js seed"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
@@ -17,13 +19,16 @@
     "mysql": "^2.18.1",
     "reflect-metadata": "^0.1.13",
     "typeorm": "^0.2.31",
+    "typeorm-seeding": "^1.6.1",
     "ulid": "^2.3.0",
     "util": "^0.12.3",
     "uuid": "^8.3.2",
     "yup": "^0.32.9"
   },
   "devDependencies": {
+    "@types/bcryptjs": "^2.4.2",
     "@types/express": "^4.17.11",
+    "@types/faker": "^5.5.6",
     "@types/uuid": "^8.3.0",
     "ts-node-dev": "^1.1.6",
     "typescript": "^4.1.5"

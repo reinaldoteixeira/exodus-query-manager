@@ -1,8 +1,13 @@
 import { useRouter } from 'next/router';
 import { NavText, NavIcon } from '@trendmicro/react-sidenav';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCodeBranch, faUsers } from '@fortawesome/free-solid-svg-icons';
+import {
+  faCodeBranch,
+  faUser,
+  faUsers,
+} from '@fortawesome/free-solid-svg-icons';
 import { SideNav, NavItem } from './styles';
+import { useAuth } from '../../../hooks/auth';
 
 interface SidebarProps {
   onToggle: () => void;
@@ -11,6 +16,8 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = ({ onToggle }) => {
   const router = useRouter();
   const { pathname } = router;
+
+  const { user } = useAuth();
 
   const handleNavigation = (page: string) => {
     router.push(page);
@@ -21,7 +28,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onToggle }) => {
       <SideNav.Toggle />
       <SideNav.Nav defaultSelected="/">
         <NavItem
-          eventKey="requests"
+          eventKey="/requests"
           active={pathname === '/'}
           onClick={() => {
             handleNavigation('/');
@@ -32,17 +39,33 @@ const Sidebar: React.FC<SidebarProps> = ({ onToggle }) => {
           </NavIcon>
           <NavText>Requests</NavText>
         </NavItem>
+        {user.role === 1 ? (
+          <NavItem
+            eventKey="/users"
+            active={pathname === '/users'}
+            onClick={() => {
+              handleNavigation('/users');
+            }}
+          >
+            <NavIcon>
+              <FontAwesomeIcon icon={faUsers} />
+            </NavIcon>
+            <NavText>Users</NavText>
+          </NavItem>
+        ) : (
+          ''
+        )}
         <NavItem
-          eventKey="/users"
-          active={pathname === '/users'}
+          eventKey="/account"
+          active={pathname === '/account'}
           onClick={() => {
-            handleNavigation('/users');
+            handleNavigation('/account');
           }}
         >
           <NavIcon>
-            <FontAwesomeIcon icon={faUsers} />
+            <FontAwesomeIcon icon={faUser} />
           </NavIcon>
-          <NavText>Users</NavText>
+          <NavText>My Account</NavText>
         </NavItem>
       </SideNav.Nav>
     </SideNav>

@@ -1,0 +1,7 @@
+id
+id_request
+id_user
+observation default null
+action
+
+RequestLog

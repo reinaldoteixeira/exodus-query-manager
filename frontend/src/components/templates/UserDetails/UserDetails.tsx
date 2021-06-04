@@ -99,7 +99,7 @@ const UserDetails: React.FC = () => {
     {
       active: true,
       href: `/users/${userId}`,
-      text: `${userId}`,
+      text: user.email,
     },
   ];
 
