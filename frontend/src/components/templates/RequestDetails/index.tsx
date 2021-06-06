@@ -3,20 +3,38 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import moment from 'moment';
 
-import { Col, Container, Row, ListGroup, Tabs, Tab } from 'react-bootstrap';
+import {
+  Col,
+  Container,
+  Row,
+  ListGroup,
+  Tabs,
+  Tab,
+  Button,
+} from 'react-bootstrap';
+
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faCheckCircle,
+  faTimesCircle,
+  faStopCircle,
+  faPlayCircle,
+} from '@fortawesome/free-solid-svg-icons';
 
 import Explain from '../../modules/Explain';
 
 import Breadcrumb from '../../elements/Breadcrumb';
 import Loader from '../../elements/Loader';
+import ModalObservation from '../../elements/ModalObservation';
 import PageTitle from '../../elements/PageTitle/PageTitle';
 import Panel from '../../elements/Panel/Panel';
 
-import { RowPanel, Code, RequestInfo } from './styles';
+import { RowPanel, Code, RequestInfo, RowActions } from './styles';
 
 import api from '../../../services/api';
-import { RequestType } from '../../../@types';
+import { RequestType, ReviewType } from '../../../@types';
 import { useAuth } from '../../../hooks/auth';
+import Review from '../../elements/Review';
 
 interface DatabaseType {
   label: string;
@@ -26,27 +44,111 @@ interface DatabaseType {
 const RequestDetails: React.FC = () => {
   const [activeTab, setActiveTab] = useState('info');
   const [request, setRequest] = useState<RequestType>();
+  const [reviews, setReviews] = useState<ReviewType[]>([]);
+  const [requestId, setRequestId] = useState<string | string[]>();
+  const [showLoader, setShowLoader] = useState(false);
+
+  const [approved, setApproved] = useState(null);
+  const [requestChanges, setRequestChanges] = useState(null);
+  const [approveDisabled, setApproveDisabled] = useState(false);
+  const [changesDisabled, setChangesDisabled] = useState(false);
+
+  const [showModalObservation, setShowModalObservation] = useState(false);
+  const handleCloseModalObservation = () => setShowModalObservation(false);
+  const handleShowModalObservation = () => setShowModalObservation(true);
 
   const router = useRouter();
-  const requestId = router.query.id;
+  const requestIdParam = router.query.id;
 
   const { user } = useAuth();
 
   useEffect(() => {
-    if (!request && requestId) {
-      loadData(requestId);
+    if (!request && requestIdParam) {
+      loadData(requestIdParam);
     }
-  }, [requestId]);
+  }, [requestIdParam]);
 
   const loadData = async (requestId: string | string[]) => {
     const response = await api.get<RequestType>(`requests/detail/${requestId}`);
     const request = response.data;
+    setShowModalObservation(false);
     setRequest(request);
+    setReviews(request.reviews);
+    checkReviews(request.reviews);
+    setRequestId(requestId);
+  };
+
+  const checkReviews = (reviews: ReviewType[]) => {
+    let hasApproved = null;
+    let hasRequestChanges = null;
+
+    reviews.map((review) => {
+      if (review.action == 1 && review.user.id === user.id) {
+        hasApproved = review.id;
+      }
+      if (review.action == 2 && review.user.id === user.id) {
+        hasRequestChanges = review.id;
+      }
+    });
+
+    if (hasApproved) {
+      setApproved(hasApproved);
+      setChangesDisabled(true);
+    } else {
+      setChangesDisabled(false);
+      setApproved(null);
+    }
+
+    if (hasRequestChanges) {
+      setRequestChanges(hasRequestChanges);
+      setApproveDisabled(true);
+    } else {
+      setApproveDisabled(false);
+      setRequestChanges(null);
+    }
   };
 
   if (!request) {
     return <Loader />;
   }
+
+  const handleCreateReview = async (
+    action: number,
+    observation: null | string
+  ) => {
+    setShowLoader(true);
+    try {
+      await api.post(`reviews/`, {
+        requestId: requestId,
+        userId: user.id,
+        action,
+        observation,
+      });
+      setShowLoader(false);
+      loadData(requestId);
+    } catch (error) {
+      setShowLoader(false);
+      console.log(error);
+    }
+  };
+
+  const handleDeleteReview = async (action: number) => {
+    setShowLoader(true);
+    try {
+      let id = approved;
+
+      if (action == 2) {
+        id = requestChanges;
+      }
+
+      await api.delete(`reviews/${id}`);
+      setShowLoader(false);
+      loadData(requestId);
+    } catch (error) {
+      setShowLoader(false);
+      console.log(error);
+    }
+  };
 
   const formatSql = (query: string) => {
     return format(query, {
@@ -94,6 +196,7 @@ const RequestDetails: React.FC = () => {
 
   return (
     <Container fluid className="p-0">
+      {showLoader && <Loader />}
       <Row>
         <Col>
           <PageTitle
@@ -103,13 +206,97 @@ const RequestDetails: React.FC = () => {
           <Breadcrumb items={breadcrumb} />
         </Col>
       </Row>
+      <RowActions>
+        <Panel title="Reviewers" className="request-reviewers">
+          {reviews.length
+            ? reviews.map((review) => {
+                if (review.action === 1) {
+                  return (
+                    <Review
+                      key={review.id}
+                      review={review}
+                      className="approve"
+                      title="Approved"
+                    />
+                  );
+                }
+                if (review.action === 2) {
+                  return (
+                    <Review
+                      key={review.id}
+                      review={review}
+                      className="request-changes"
+                      title="Request Changes"
+                    />
+                  );
+                }
+              })
+            : 'No one has reviewed it yet'}
+        </Panel>
+        <Panel className="request-actions">
+          {!approved ? (
+            <Button
+              size="sm"
+              variant="secondary"
+              onClick={() => handleCreateReview(1, null)}
+              disabled={approveDisabled}
+            >
+              <FontAwesomeIcon icon={faCheckCircle} /> Approve
+            </Button>
+          ) : (
+            <Button
+              size="sm"
+              variant="secondary"
+              onClick={() => handleDeleteReview(1)}
+            >
+              <FontAwesomeIcon icon={faCheckCircle} /> Unapprove
+            </Button>
+          )}
+          {!requestChanges ? (
+            <>
+              <ModalObservation
+                handleCloseModalObservation={handleCloseModalObservation}
+                handleCreateReview={handleCreateReview}
+                showModalObservation={showModalObservation}
+              />
+              <Button
+                size="sm"
+                variant="secondary"
+                className="btn-changes"
+                onClick={handleShowModalObservation}
+                disabled={changesDisabled}
+              >
+                <FontAwesomeIcon icon={faStopCircle} /> Request changes
+              </Button>
+            </>
+          ) : (
+            <Button
+              size="sm"
+              variant="secondary"
+              className="btn-changes"
+              onClick={() => handleDeleteReview(2)}
+              disabled={changesDisabled}
+            >
+              <FontAwesomeIcon icon={faStopCircle} /> Remove request changes
+            </Button>
+          )}
+          {user.role == 1 ? (
+            <>
+              <Button size="sm" variant="secondary">
+                <FontAwesomeIcon icon={faPlayCircle} /> Send queue
+              </Button>
+              <Button size="sm" variant="secondary" className="btn-deny">
+                <FontAwesomeIcon icon={faTimesCircle} /> Decline
+              </Button>
+            </>
+          ) : (
+            ''
+          )}
+        </Panel>
+      </RowActions>
       <RowPanel>
         <Panel className="request-details-tabs">
-          <Tabs
-            id="controlled-tab-example"
-            activeKey={activeTab}
-            onSelect={(tab) => setActiveTab(tab)}
-          >
+          <Tabs activeKey={activeTab} onSelect={(tab) => setActiveTab(tab)}>
             <Tab eventKey="info" title="Info">
               <ListGroup>
                 <ListGroup.Item>

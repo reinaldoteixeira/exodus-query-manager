@@ -22,6 +22,44 @@ export const RowPanel = styled(Row)`
   }
 `;
 
+export const RowActions = styled(Row)`
+  padding: 10px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+
+  .request-reviewers {
+    @media only screen and (min-width: 1025px) {
+      width: 30%;
+    }
+    overflow: auto;
+
+    .card-body {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+  }
+
+  .request-actions {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    overflow: auto;
+
+    .card-body {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+  }
+`;
+
 export const Code = styled.code`
   font-size: 1rem;
   white-space: pre-line;

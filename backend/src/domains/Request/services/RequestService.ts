@@ -13,6 +13,7 @@ import {
   ResponseListType,
   ResponseType,
 } from '../@types';
+import { ReviewsRepository } from '../../Review/repositories/ReviewsRepository';
 
 class RequestService {
   async create(payload: CreateType): Promise<ResponseType> {
@@ -89,16 +90,25 @@ class RequestService {
 
       const requestRepository = getCustomRepository(RequestsRepository);
 
-      const request = await requestRepository.findOne({
+      let request = await requestRepository.findOne({
         where: {
           id,
         },
         relations: ['user'],
       });
 
+      const reviewRepository = getCustomRepository(ReviewsRepository);
+
+      const reviews = await reviewRepository.find({
+        where: {
+          request: id,
+        },
+        relations: ['user'],
+      });
+
       return {
         success: true,
-        data: request,
+        data: { ...request, reviews: reviews },
       };
     } catch (err) {
       return {
@@ -131,8 +141,6 @@ class RequestService {
       const query = util.promisify(connection.query).bind(connection);
 
       const sql = `EXPLAIN ${request.ddl_command}`;
-
-      console.log(sql);
 
       const rows = await query(sql);
 

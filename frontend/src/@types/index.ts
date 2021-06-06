@@ -8,13 +8,16 @@ export type RequestType = {
   status: number;
   time_to_run: string;
   created_at: Date;
-  user: {
-    id: string;
-    email: string;
-    name: string;
-    role: number;
-    created_at: Date;
-  };
+  user: UserType;
+  reviews: ReviewType[];
+};
+
+export type ReviewType = {
+  id: string;
+  action: number;
+  created_at: Date;
+  observation: null | string;
+  user: UserType;
 };
 
 export type ResponseRequest = {
@@ -23,7 +26,9 @@ export type ResponseRequest = {
 };
 
 export type UserType = {
-  name: string;
+  id: string;
   email: string;
+  name: string;
   role: number;
+  created_at: Date;
 };

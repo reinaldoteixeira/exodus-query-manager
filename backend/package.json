@@ -5,7 +5,9 @@
   "scripts": {
     "dev": "ts-node-dev --transpile-only --ignore-watch node_nodules src/server.ts",
     "typeorm": "ts-node-dev node_modules/typeorm/cli.js",
-    "typeorm:migrate": "ts-node-dev node_modules/typeorm/cli.js migration:run",
+    "typeorm:migration": "ts-node-dev node_modules/typeorm/cli.js migration:run",
+    "typeorm:migration-create": "ts-node-dev node_modules/typeorm/cli.js migration:create -n",
+    "typeorm:migration-revert": "ts-node-dev node_modules/typeorm/cli.js migration:revert",
     "typeorm:seed-config": "ts-node ./node_modules/typeorm-seeding/dist/cli.js config",
     "typeorm:seed-run": "ts-node ./node_modules/typeorm-seeding/dist/cli.js seed"
   },

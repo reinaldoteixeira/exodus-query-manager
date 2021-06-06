@@ -56,9 +56,7 @@ const Explain: React.FC<ExplainProps> = ({ requestId, databases }) => {
       //removerMock
 
       setExplain(explain);
-      console.log(explain);
     } catch (err) {
-      console.log(err);
       setExplain([]);
     }
   };

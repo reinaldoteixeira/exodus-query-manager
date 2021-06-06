@@ -18,7 +18,8 @@ export default class MyDocument extends Document {
     try {
       ctx.renderPage = () =>
         originalRenderPage({
-          enhanceApp: App => props => sheet.collectStyles(<App {...props} />),
+          enhanceApp: (App) => (props) =>
+            sheet.collectStyles(<App {...props} />),
         });
 
       const initialProps = await Document.getInitialProps(ctx);
@@ -41,7 +42,6 @@ export default class MyDocument extends Document {
       <Html lang="pt">
         <Head>
           <meta charSet="utf-8" />
-
           <link
             href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700"
             rel="stylesheet"
