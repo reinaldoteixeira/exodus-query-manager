@@ -11,6 +11,7 @@ import {
   Tabs,
   Tab,
   Button,
+  Alert,
 } from 'react-bootstrap';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -29,7 +30,7 @@ import ModalObservation from '../../elements/ModalObservation';
 import PageTitle from '../../elements/PageTitle/PageTitle';
 import Panel from '../../elements/Panel/Panel';
 
-import { RowPanel, Code, RequestInfo, RowActions } from './styles';
+import { RowPanel, Code, RequestInfo, RowActions, RowAlert } from './styles';
 
 import api from '../../../services/api';
 import { RequestType, ReviewType } from '../../../@types';
@@ -50,8 +51,11 @@ const RequestDetails: React.FC = () => {
 
   const [approved, setApproved] = useState(null);
   const [requestChanges, setRequestChanges] = useState(null);
+
   const [approveDisabled, setApproveDisabled] = useState(false);
   const [changesDisabled, setChangesDisabled] = useState(false);
+  const [executeDisabled, setExecuteDisabled] = useState(false);
+  const [declineDisabled, setDeclineDisabled] = useState(false);
 
   const [showModalObservation, setShowModalObservation] = useState(false);
   const handleCloseModalObservation = () => setShowModalObservation(false);
@@ -71,11 +75,19 @@ const RequestDetails: React.FC = () => {
   const loadData = async (requestId: string | string[]) => {
     const response = await api.get<RequestType>(`requests/detail/${requestId}`);
     const request = response.data;
+
     setShowModalObservation(false);
     setRequest(request);
     setReviews(request.reviews);
     checkReviews(request.reviews);
     setRequestId(requestId);
+
+    if (request.status != 0) {
+      setApproveDisabled(true);
+      setChangesDisabled(true);
+      setExecuteDisabled(true);
+      setDeclineDisabled(true);
+    }
   };
 
   const checkReviews = (reviews: ReviewType[]) => {
@@ -150,6 +162,34 @@ const RequestDetails: React.FC = () => {
     }
   };
 
+  const handleExecute = async () => {
+    setShowLoader(true);
+    try {
+      await api.patch(`requests/edit/${requestId}`, {
+        status: 1,
+      });
+      setShowLoader(false);
+      loadData(requestId);
+    } catch (error) {
+      setShowLoader(false);
+      console.log(error);
+    }
+  };
+
+  const handleDecline = async () => {
+    setShowLoader(true);
+    try {
+      await api.patch(`requests/edit/${requestId}`, {
+        status: 2,
+      });
+      setShowLoader(false);
+      loadData(requestId);
+    } catch (error) {
+      setShowLoader(false);
+      console.log(error);
+    }
+  };
+
   const formatSql = (query: string) => {
     return format(query, {
       language: 'sql',
@@ -206,6 +246,23 @@ const RequestDetails: React.FC = () => {
           <Breadcrumb items={breadcrumb} />
         </Col>
       </Row>
+      <RowAlert>
+        {request.status === 1 ? (
+          <Alert variant="info">This request was sent to the queue</Alert>
+        ) : (
+          ''
+        )}
+        {request.status === 2 ? (
+          <Alert variant="danger">This request was refused</Alert>
+        ) : (
+          ''
+        )}
+        {request.status === 3 ? (
+          <Alert variant="success">This request was executed</Alert>
+        ) : (
+          ''
+        )}
+      </RowAlert>
       <RowActions>
         <Panel title="Reviewers" className="request-reviewers">
           {reviews.length
@@ -280,12 +337,23 @@ const RequestDetails: React.FC = () => {
               <FontAwesomeIcon icon={faStopCircle} /> Remove request changes
             </Button>
           )}
-          {user.role == 1 ? (
+          {user.role === 1 ? (
             <>
-              <Button size="sm" variant="secondary">
+              <Button
+                size="sm"
+                variant="secondary"
+                onClick={() => handleExecute()}
+                disabled={executeDisabled}
+              >
                 <FontAwesomeIcon icon={faPlayCircle} /> Send queue
               </Button>
-              <Button size="sm" variant="secondary" className="btn-deny">
+              <Button
+                size="sm"
+                variant="secondary"
+                className="btn-deny"
+                onClick={() => handleDecline()}
+                disabled={declineDisabled}
+              >
                 <FontAwesomeIcon icon={faTimesCircle} /> Decline
               </Button>
             </>

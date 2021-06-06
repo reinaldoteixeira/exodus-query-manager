@@ -4,9 +4,9 @@ import { CustomError } from '../../../errors/CustomError';
 import {
   CustomRequest,
   ListType,
-  DetailType,
   ExplainQueryType,
-  ExplainParamType,
+  IdParamType,
+  EditBodyType,
 } from '../@types';
 
 import RequestService from '../services/RequestService';
@@ -40,7 +40,7 @@ class RequestController {
   }
 
   async detail(
-    request: CustomRequest<any, any, DetailType>,
+    request: CustomRequest<any, any, IdParamType>,
     response: Response
   ) {
     const requestService = new RequestService();
@@ -55,7 +55,7 @@ class RequestController {
   }
 
   async explain(
-    request: CustomRequest<any, ExplainQueryType, ExplainParamType>,
+    request: CustomRequest<any, ExplainQueryType, IdParamType>,
     response: Response
   ) {
     const requestService = new RequestService();
@@ -66,6 +66,21 @@ class RequestController {
     };
 
     const getted = await requestService.explain(payload);
+
+    if (getted.success) {
+      return response.status(200).json(getted.data);
+    }
+
+    throw new CustomError(getted.message);
+  }
+
+  async edit(
+    request: CustomRequest<EditBodyType, any, IdParamType>,
+    response: Response
+  ) {
+    const requestService = new RequestService();
+
+    const getted = await requestService.edit(request.params, request.body);
 
     if (getted.success) {
       return response.status(200).json(getted.data);

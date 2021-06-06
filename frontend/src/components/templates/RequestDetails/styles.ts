@@ -60,6 +60,15 @@ export const RowActions = styled(Row)`
   }
 `;
 
+export const RowAlert = styled(Row)`
+  padding: 10px;
+
+  div {
+    width: 100%;
+    text-align: center;
+  }
+`;
+
 export const Code = styled.code`
   font-size: 1rem;
   white-space: pre-line;

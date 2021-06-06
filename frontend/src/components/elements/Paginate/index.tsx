@@ -6,16 +6,18 @@ interface PaginateProps {
   total: number | null;
   filterTake: number;
   activePage: number;
-  setFilterSkip: (value: number) => void;
+  filterStatus: number;
   setActivePage: (value: number) => void;
+  loadData: (filterStatus: number, filterSkip: number) => void;
 }
 
 const Paginate: React.FC<PaginateProps> = ({
   total,
   filterTake,
   activePage,
-  setFilterSkip,
+  filterStatus,
   setActivePage,
+  loadData,
 }) => {
   if (total < filterTake) {
     return null;
@@ -23,7 +25,8 @@ const Paginate: React.FC<PaginateProps> = ({
 
   const handleSetPage = useCallback(
     (pageSelected: number) => () => {
-      setFilterSkip(filterTake * (pageSelected - 1));
+      const filterSkip = filterTake * (pageSelected - 1);
+      loadData(filterStatus, filterSkip);
       setActivePage(pageSelected);
     },
     []

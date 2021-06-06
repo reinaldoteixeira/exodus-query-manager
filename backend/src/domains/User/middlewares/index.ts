@@ -33,6 +33,7 @@ export const editMiddleware = async (
   next: NextFunction
 ) => {
   const schema = Yup.object().shape({
+    id: Yup.string(),
     name: Yup.string(),
     email: Yup.string().email('Email should be valid'),
     password: Yup.string().min(6, 'Minimum of 6 characters'),
@@ -40,7 +41,7 @@ export const editMiddleware = async (
   });
 
   try {
-    await schema.validate(request.body);
+    await schema.validate({ ...request.body, ...request.params });
     return next();
   } catch (err) {
     throw new CustomError(err.message, 422);

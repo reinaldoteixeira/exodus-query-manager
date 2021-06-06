@@ -16,10 +16,9 @@ import api from '../../../services/api';
 const Requests: React.FC = () => {
   const router = useRouter();
 
-  const [filterStatus, setFilterStatus] = useState(0);
   const filterTake = 10;
-  const [filterSkip, setFilterSkip] = useState(0);
   const [activePage, setActivePage] = useState(1);
+  const [filterStatus, setFilterStatus] = useState(0);
 
   const [requestsData, setRequestsData] = useState([]);
   const [total, setTotal] = useState(0);
@@ -32,6 +31,7 @@ const Requests: React.FC = () => {
     (status: number) =>
       (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         setFilterStatus(status);
+        loadData(status);
       },
     []
   );
@@ -42,7 +42,7 @@ const Requests: React.FC = () => {
     }
   }, []);
 
-  const loadData = async () => {
+  const loadData = async (filterStatus = 0, filterSkip = 0) => {
     const response = await api.get<ResponseRequest>(
       `requests/list?status=${filterStatus}&take=${filterTake}&skip=${filterSkip}`
     );
@@ -75,7 +75,9 @@ const Requests: React.FC = () => {
                 Waiting
               </Dropdown.Item>
               <Dropdown.Item onClick={handleSetFilter(1)}>Queued</Dropdown.Item>
-              <Dropdown.Item onClick={handleSetFilter(2)}>Deny</Dropdown.Item>
+              <Dropdown.Item onClick={handleSetFilter(2)}>
+                Declined
+              </Dropdown.Item>
               <Dropdown.Item onClick={handleSetFilter(3)}>
                 Executed
               </Dropdown.Item>
@@ -107,8 +109,9 @@ const Requests: React.FC = () => {
         total={total}
         filterTake={filterTake}
         activePage={activePage}
-        setFilterSkip={setFilterSkip}
+        filterStatus={filterStatus}
         setActivePage={setActivePage}
+        loadData={loadData}
       />
     </Container>
   );

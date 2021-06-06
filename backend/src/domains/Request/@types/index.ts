@@ -16,16 +16,8 @@ export interface ListType extends Query {
   skip: string;
 }
 
-export interface DetailType extends Params {
-  id: string;
-}
-
 export interface ExplainQueryType extends Query {
   database: string;
-}
-
-export interface ExplainParamType extends Params {
-  id: string;
 }
 
 export interface ExplainType {
@@ -41,6 +33,7 @@ export interface CreateType {
   description: string;
   timeToRun: string;
   schedule: string;
+  status?: number;
 }
 
 export interface ResponseType {
@@ -55,3 +48,8 @@ export interface ResponseListType {
   total?: number;
   message?: string;
 }
+export interface IdParamType extends Params {
+  id: string;
+}
+
+export interface EditBodyType extends CreateType {}

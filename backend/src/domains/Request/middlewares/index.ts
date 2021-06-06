@@ -49,3 +49,30 @@ export const listMiddleware = async (
     throw new CustomError(err.message, 422);
   }
 };
+
+export const editMiddleware = async (
+  request: Request,
+  response: Response,
+  next: NextFunction
+) => {
+  const schema = Yup.object().shape({
+    id: Yup.string(),
+    userId: Yup.string(),
+    host: Yup.string(),
+    databases: Yup.array().of(Yup.object()),
+    ddl: Yup.string(),
+    description: Yup.string(),
+    timeToRun: Yup.string(),
+    schedule: Yup.string().nullable(true).when('timeToRun', {
+      is: 'schedule',
+      then: Yup.string(),
+    }),
+  });
+
+  try {
+    await schema.validate({ ...request.body, ...request.params });
+    return next();
+  } catch (err) {
+    throw new CustomError(err.message, 422);
+  }
+};

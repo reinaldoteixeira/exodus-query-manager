@@ -51,6 +51,21 @@ const RequestRow: React.FC<RowProps> = ({ request }) => {
     return char;
   };
 
+  const getRequestStatus = (status: number) => {
+    switch (status) {
+      case 0:
+        return 'Waiting';
+      case 1:
+        return 'Queued';
+      case 2:
+        return 'Declined';
+      case 3:
+        return 'Executed';
+      default:
+        break;
+    }
+  };
+
   return (
     <tr>
       <td>
@@ -65,7 +80,7 @@ const RequestRow: React.FC<RowProps> = ({ request }) => {
         </div>
       </td>
       <td>
-        <RequestStatus>Waiting</RequestStatus>
+        <RequestStatus>{getRequestStatus(request.status)}</RequestStatus>
       </td>
     </tr>
   );

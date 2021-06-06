@@ -8,7 +8,9 @@ import { RequestsRepository } from '../repositories/RequestsRepository';
 import {
   CreateType,
   DetailType,
+  EditBodyType,
   ExplainType,
+  IdParamType,
   ListType,
   ResponseListType,
   ResponseType,
@@ -154,6 +156,32 @@ class RequestService {
       return {
         success: false,
         message: err,
+      };
+    }
+  }
+
+  async edit(
+    params: IdParamType,
+    payload: EditBodyType
+  ): Promise<ResponseType> {
+    try {
+      const { id } = params;
+
+      const requestRepository = getCustomRepository(RequestsRepository);
+
+      const request = await requestRepository.save({
+        id,
+        ...payload,
+      });
+
+      return {
+        success: true,
+        data: request,
+      };
+    } catch (err) {
+      return {
+        success: false,
+        message: err.message,
       };
     }
   }
