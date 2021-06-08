@@ -1,8 +1,8 @@
-import { useRouter } from 'next/router';
-import { Button, Col, Container, Form, Row } from 'react-bootstrap';
-import { Errors } from '../../../utils/getValidationErrors';
-import FormGroup from '../../elements/FormGroup/FormGroup';
-import Select from '../../elements/Select/Select';
+import { useRouter } from "next/router";
+import { Button, Col, Container, Form, Row } from "react-bootstrap";
+import { Errors } from "../../../utils/getValidationErrors";
+import FormGroup from "../../elements/FormGroup/FormGroup";
+import Select from "../../elements/Select/Select";
 
 interface User {
   email: string;
@@ -15,6 +15,7 @@ interface UserFormProps {
   onSubmit: (event: React.FormEvent) => Promise<void>;
   errors?: Errors;
   user?: User;
+  myAccount?: boolean;
 }
 
 const UserForm: React.FC<UserFormProps> = ({
@@ -22,20 +23,21 @@ const UserForm: React.FC<UserFormProps> = ({
   onSubmit,
   errors,
   user,
+  myAccount,
 }) => {
   const router = useRouter();
 
   const roleOptions = [
     {
-      label: 'Admin',
+      label: "Admin",
       value: 1,
     },
     {
-      label: 'Moderator',
+      label: "Moderator",
       value: 2,
     },
     {
-      label: 'Requester',
+      label: "Requester",
       value: 3,
     },
   ];
@@ -67,9 +69,11 @@ const UserForm: React.FC<UserFormProps> = ({
               <Form.Control
                 type="email"
                 name="email"
+                autoComplete="none"
                 defaultValue={user?.email}
                 onChange={handleChangeInput}
                 placeholder="Enter the email"
+                disabled={myAccount || false}
                 isInvalid={!!errors.email}
               />
             </FormGroup>
@@ -80,6 +84,7 @@ const UserForm: React.FC<UserFormProps> = ({
               <Form.Control
                 type="text"
                 name="name"
+                autoComplete="none"
                 defaultValue={user?.name}
                 onChange={handleChangeInput}
                 placeholder="Enter the name"
@@ -96,6 +101,7 @@ const UserForm: React.FC<UserFormProps> = ({
               <Form.Control
                 type="password"
                 name="password"
+                autoComplete="none"
                 onChange={handleChangeInput}
                 placeholder="Enter the password"
                 isInvalid={!!errors.password}
@@ -109,8 +115,9 @@ const UserForm: React.FC<UserFormProps> = ({
                 instanceId="roleSelect"
                 name="role"
                 defaultValue={defaultOption}
-                onChange={({ value }) => onChange('role', value)}
+                onChange={({ value }) => onChange("role", value)}
                 options={roleOptions}
+                isDisabled={myAccount || false}
                 isInvalid={!!errors.role}
               />
             </FormGroup>

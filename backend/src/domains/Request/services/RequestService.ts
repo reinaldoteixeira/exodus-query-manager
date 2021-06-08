@@ -20,7 +20,8 @@ import { ReviewsRepository } from '../../Review/repositories/ReviewsRepository';
 class RequestService {
   async create(payload: CreateType): Promise<ResponseType> {
     try {
-      const { userId, host, ddl, description, timeToRun, schedule } = payload;
+      const { userId, host, ddl_command, description, time_to_run, schedule } =
+        payload;
 
       let { databases } = payload;
 
@@ -38,9 +39,9 @@ class RequestService {
         host,
         databases,
         description,
-        time_to_run: timeToRun,
+        time_to_run,
         schedule,
-        ddl_command: ddl,
+        ddl_command,
         status: 0,
       });
 
@@ -71,6 +72,9 @@ class RequestService {
         relations: ['user'],
         take: parseInt(take),
         skip: parseInt(skip),
+        order: {
+          created_at: 'DESC',
+        },
       });
 
       return {
@@ -168,6 +172,10 @@ class RequestService {
       const { id } = params;
 
       const requestRepository = getCustomRepository(RequestsRepository);
+
+      if (payload.databases) {
+        payload.databases = JSON.stringify(payload.databases);
+      }
 
       const request = await requestRepository.save({
         id,

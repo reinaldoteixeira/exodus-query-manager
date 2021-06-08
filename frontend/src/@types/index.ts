@@ -32,3 +32,14 @@ export type UserType = {
   role: number;
   created_at: Date;
 };
+
+export type DatabasesType = {
+  label: string;
+  value: string;
+}[];
+
+export type ConfigType = {
+  id?: string;
+  content: string;
+  created_at?: Date;
+};

@@ -101,14 +101,14 @@ class UserService {
 
       const userRepository = getCustomRepository(UsersRepository);
 
-      const user = await userRepository.save({
-        id,
-        ...payload,
-      });
+      if (payload.password) {
+        payload.password = bcrypt.hashSync(payload.password);
+      }
+
+      await userRepository.update(id, { ...payload });
 
       return {
         success: true,
-        data: user,
       };
     } catch (err) {
       return {

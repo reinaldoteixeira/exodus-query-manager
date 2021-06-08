@@ -28,10 +28,10 @@ export interface ExplainType {
 export interface CreateType {
   userId: string;
   host: string;
-  ddl: string;
+  ddl_command: string;
   databases: string;
   description: string;
-  timeToRun: string;
+  time_to_run: string;
   schedule: string;
   status?: number;
 }

@@ -1,7 +1,7 @@
-import { format } from 'sql-formatter';
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
-import moment from 'moment';
+import { format } from "sql-formatter";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import moment from "moment";
 
 import {
   Col,
@@ -12,30 +12,31 @@ import {
   Tab,
   Button,
   Alert,
-} from 'react-bootstrap';
+} from "react-bootstrap";
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCheckCircle,
   faTimesCircle,
   faStopCircle,
   faPlayCircle,
-} from '@fortawesome/free-solid-svg-icons';
+  faEdit,
+} from "@fortawesome/free-solid-svg-icons";
 
-import Explain from '../../modules/Explain';
+import Explain from "../../modules/Explain";
 
-import Breadcrumb from '../../elements/Breadcrumb';
-import Loader from '../../elements/Loader';
-import ModalObservation from '../../elements/ModalObservation';
-import PageTitle from '../../elements/PageTitle/PageTitle';
-import Panel from '../../elements/Panel/Panel';
+import Breadcrumb from "../../elements/Breadcrumb";
+import Loader from "../../elements/Loader";
+import ModalObservation from "../../elements/ModalObservation";
+import PageTitle from "../../elements/PageTitle/PageTitle";
+import Panel from "../../elements/Panel/Panel";
 
-import { RowPanel, Code, RequestInfo, RowActions, RowAlert } from './styles';
+import { RowPanel, Code, RequestInfo, RowActions, RowAlert } from "./styles";
 
-import api from '../../../services/api';
-import { RequestType, ReviewType } from '../../../@types';
-import { useAuth } from '../../../hooks/auth';
-import Review from '../../elements/Review';
+import api from "../../../services/api";
+import { RequestType, ReviewType } from "../../../@types";
+import { useAuth } from "../../../hooks/auth";
+import Review from "../../elements/Review";
 
 interface DatabaseType {
   label: string;
@@ -43,7 +44,7 @@ interface DatabaseType {
 }
 
 const RequestDetails: React.FC = () => {
-  const [activeTab, setActiveTab] = useState('info');
+  const [activeTab, setActiveTab] = useState("info");
   const [request, setRequest] = useState<RequestType>();
   const [reviews, setReviews] = useState<ReviewType[]>([]);
   const [requestId, setRequestId] = useState<string | string[]>();
@@ -190,10 +191,14 @@ const RequestDetails: React.FC = () => {
     }
   };
 
+  const handleEditRequest = () => {
+    router.push(`/requests/edit/${requestIdParam}`);
+  };
+
   const formatSql = (query: string) => {
     return format(query, {
-      language: 'sql',
-      indent: '\n',
+      language: "sql",
+      indent: "\n",
       uppercase: true,
     });
   };
@@ -205,27 +210,27 @@ const RequestDetails: React.FC = () => {
       return element.value;
     });
 
-    return databasesFormated.join(' / ');
+    return databasesFormated.join(" / ");
   };
 
   const showTimeToRun = (timeToRun: string) => {
     switch (timeToRun) {
-      case 'anytime':
-        return 'Anytime';
-      case 'soon':
-        return 'As soon as possible';
-      case 'schedule':
-        return 'Schedule time';
-      case 'manual':
-        return 'Manual';
+      case "anytime":
+        return "Anytime";
+      case "soon":
+        return "As soon as possible";
+      case "schedule":
+        return "Schedule time";
+      case "manual":
+        return "Manual";
     }
   };
 
   const breadcrumb = [
     {
       active: true,
-      href: '/',
-      text: 'Home',
+      href: "/",
+      text: "Home",
     },
     {
       active: true,
@@ -250,17 +255,17 @@ const RequestDetails: React.FC = () => {
         {request.status === 1 ? (
           <Alert variant="info">This request was sent to the queue</Alert>
         ) : (
-          ''
+          ""
         )}
         {request.status === 2 ? (
           <Alert variant="danger">This request was refused</Alert>
         ) : (
-          ''
+          ""
         )}
         {request.status === 3 ? (
           <Alert variant="success">This request was executed</Alert>
         ) : (
-          ''
+          ""
         )}
       </RowAlert>
       <RowActions>
@@ -288,9 +293,20 @@ const RequestDetails: React.FC = () => {
                   );
                 }
               })
-            : 'No one has reviewed it yet'}
+            : "No one has reviewed it yet"}
         </Panel>
         <Panel className="request-actions">
+          {user.id === request.user.id ? (
+            <Button
+              size="sm"
+              variant="primary"
+              onClick={() => handleEditRequest()}
+            >
+              <FontAwesomeIcon icon={faEdit} /> Edit request
+            </Button>
+          ) : (
+            ""
+          )}
           {!approved ? (
             <Button
               size="sm"
@@ -358,7 +374,7 @@ const RequestDetails: React.FC = () => {
               </Button>
             </>
           ) : (
-            ''
+            ""
           )}
         </Panel>
       </RowActions>
@@ -374,29 +390,30 @@ const RequestDetails: React.FC = () => {
                   Description: <RequestInfo>{request.description}</RequestInfo>
                 </ListGroup.Item>
                 <ListGroup.Item>
-                  Created At:{' '}
+                  Created At:{" "}
                   <RequestInfo>
-                    {moment(request.created_at).format('DD/MM/YYYY HH:mm:ss')}
+                    {moment(request.created_at).format("DD/MM/YYYY HH:mm:ss")}
                   </RequestInfo>
                 </ListGroup.Item>
                 <ListGroup.Item>
                   Host: <RequestInfo>{request.host}</RequestInfo>
                 </ListGroup.Item>
                 <ListGroup.Item>
-                  Database(s):{' '}
+                  Database(s):{" "}
                   <RequestInfo>{showDatabases(request.databases)}</RequestInfo>
                 </ListGroup.Item>
                 <ListGroup.Item>
-                  Time to Run:{' '}
+                  Time to Run:{" "}
                   <RequestInfo>
                     {showTimeToRun(request.time_to_run)}
                   </RequestInfo>
                 </ListGroup.Item>
                 <ListGroup.Item>
-                  Schedule:{' '}
+                  Schedule:{" "}
                   <RequestInfo>
-                    {moment(request.schedule).format('DD/MM/YYYY HH:mm') ||
-                      'not configured'}
+                    {request.schedule
+                      ? moment(request.schedule).format("DD/MM/YYYY HH:mm")
+                      : "not configured"}
                   </RequestInfo>
                 </ListGroup.Item>
               </ListGroup>
@@ -409,7 +426,7 @@ const RequestDetails: React.FC = () => {
                 <Explain requestId={requestId} databases={request.databases} />
               </Tab>
             ) : (
-              ''
+              ""
             )}
           </Tabs>
         </Panel>

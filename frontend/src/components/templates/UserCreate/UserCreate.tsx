@@ -1,30 +1,22 @@
-import { useRouter } from 'next/router';
-import { useState } from 'react';
-import { Col, Container, Row } from 'react-bootstrap';
-import * as Yup from 'yup';
-import api from '../../../services/api';
+import { useRouter } from "next/router";
+import { useState } from "react";
+import { Col, Container, Row } from "react-bootstrap";
+import * as Yup from "yup";
+import api from "../../../services/api";
 import getValidationErrors, {
   Errors,
-} from '../../../utils/getValidationErrors';
+} from "../../../utils/getValidationErrors";
 
-import Breadcrumb from '../../elements/Breadcrumb';
-import Loader from '../../elements/Loader';
-import PageTitle from '../../elements/PageTitle/PageTitle';
-import Panel from '../../elements/Panel/Panel';
-import UserForm from '../../modules/UserForm/UserForm';
-
-interface UserState {
-  email: string;
-  name: string;
-  password: string;
-  role: string;
-  groups: string[];
-}
+import Breadcrumb from "../../elements/Breadcrumb";
+import Loader from "../../elements/Loader";
+import PageTitle from "../../elements/PageTitle/PageTitle";
+import Panel from "../../elements/Panel/Panel";
+import UserForm from "../../modules/UserForm/UserForm";
 
 const UserCreate: React.FC = () => {
   const router = useRouter();
 
-  const [user, setUser] = useState({} as UserState);
+  const [user, setUser] = useState({});
   const [errors, setErrors] = useState({} as Errors);
   const [showLoader, setShowLoader] = useState(false);
 
@@ -40,12 +32,12 @@ const UserCreate: React.FC = () => {
       event.preventDefault();
 
       const schema = Yup.object().shape({
-        email: Yup.string().required('Email is required').email(),
-        name: Yup.string().required('Name is required'),
+        email: Yup.string().required("Email is required").email(),
+        name: Yup.string().required("Name is required"),
         password: Yup.string()
-          .required('Password is required')
-          .min(6, 'Minimum of 6 characters'),
-        role: Yup.string().required('Role is required'),
+          .required("Password is required")
+          .min(6, "Minimum of 6 characters"),
+        role: Yup.string().required("Role is required"),
       });
 
       await schema.validate(user, {
@@ -55,7 +47,7 @@ const UserCreate: React.FC = () => {
       setShowLoader(true);
 
       try {
-        await api.post('/users', {
+        await api.post("/users", {
           ...user,
         });
 
@@ -76,13 +68,13 @@ const UserCreate: React.FC = () => {
   const breadcrumb = [
     {
       active: true,
-      href: '/users',
-      text: 'Users',
+      href: "/users",
+      text: "Users",
     },
     {
       active: true,
       href: `/users/create`,
-      text: 'New user',
+      text: "New user",
     },
   ];
 

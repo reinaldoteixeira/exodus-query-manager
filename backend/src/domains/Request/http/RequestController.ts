@@ -80,13 +80,13 @@ class RequestController {
   ) {
     const requestService = new RequestService();
 
-    const getted = await requestService.edit(request.params, request.body);
+    const updated = await requestService.edit(request.params, request.body);
 
-    if (getted.success) {
-      return response.status(200).json(getted.data);
+    if (updated.success) {
+      return response.status(200).json(updated.data);
     }
 
-    throw new CustomError(getted.message);
+    throw new CustomError(updated.message);
   }
 }
 

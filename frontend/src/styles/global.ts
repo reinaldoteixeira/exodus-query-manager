@@ -1,4 +1,4 @@
-import { createGlobalStyle } from 'styled-components';
+import { createGlobalStyle } from "styled-components";
 
 export default createGlobalStyle`
 * {
@@ -26,6 +26,11 @@ input:focus {
 
 .form-control.is-invalid {
   border-color: ${(props) => props.theme.colors.danger};
+}
+
+.form-control:focus {
+  border-color: ${(props) => props.theme.colors.primary};
+  box-shadow: 0 .125rem .25rem ${(props) => props.theme.colors.primary}30;
 }
 
 table {

@@ -1,13 +1,14 @@
-import { useRouter } from 'next/router';
-import { NavText, NavIcon } from '@trendmicro/react-sidenav';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useRouter } from "next/router";
+import { NavText, NavIcon } from "@trendmicro/react-sidenav";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCodeBranch,
   faUser,
   faUsers,
-} from '@fortawesome/free-solid-svg-icons';
-import { SideNav, NavItem } from './styles';
-import { useAuth } from '../../../hooks/auth';
+  faCog,
+} from "@fortawesome/free-solid-svg-icons";
+import { SideNav, NavItem } from "./styles";
+import { useAuth } from "../../../hooks/auth";
 
 interface SidebarProps {
   onToggle: () => void;
@@ -29,9 +30,9 @@ const Sidebar: React.FC<SidebarProps> = ({ onToggle }) => {
       <SideNav.Nav defaultSelected="/">
         <NavItem
           eventKey="/requests"
-          active={pathname === '/'}
+          active={pathname === "/"}
           onClick={() => {
-            handleNavigation('/');
+            handleNavigation("/");
           }}
         >
           <NavIcon>
@@ -40,26 +41,40 @@ const Sidebar: React.FC<SidebarProps> = ({ onToggle }) => {
           <NavText>Requests</NavText>
         </NavItem>
         {user.role === 1 ? (
-          <NavItem
-            eventKey="/users"
-            active={pathname === '/users'}
-            onClick={() => {
-              handleNavigation('/users');
-            }}
-          >
-            <NavIcon>
-              <FontAwesomeIcon icon={faUsers} />
-            </NavIcon>
-            <NavText>Users</NavText>
-          </NavItem>
+          <>
+            <NavItem
+              eventKey="/users"
+              active={pathname === "/users"}
+              onClick={() => {
+                handleNavigation("/users");
+              }}
+            >
+              <NavIcon>
+                <FontAwesomeIcon icon={faUsers} />
+              </NavIcon>
+              <NavText>Users</NavText>
+            </NavItem>
+            <NavItem
+              eventKey="/settings"
+              active={pathname === "/settings"}
+              onClick={() => {
+                handleNavigation("/settings");
+              }}
+            >
+              <NavIcon>
+                <FontAwesomeIcon icon={faCog} />
+              </NavIcon>
+              <NavText>Settings</NavText>
+            </NavItem>
+          </>
         ) : (
-          ''
+          ""
         )}
         <NavItem
           eventKey="/account"
-          active={pathname === '/account'}
+          active={pathname === `/account/${user.id}`}
           onClick={() => {
-            handleNavigation('/account');
+            handleNavigation(`/account/${user.id}`);
           }}
         >
           <NavIcon>

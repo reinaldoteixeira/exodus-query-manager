@@ -15,7 +15,7 @@ import UserForm from "../../modules/UserForm/UserForm";
 import Loader from "../../elements/Loader";
 import BreadCrumb from "../../elements/Breadcrumb";
 
-const UserDetails: React.FC = () => {
+const MyAccount: React.FC = () => {
   const [changedUser, setChangedUser] = useState({});
   const [errors, setErrors] = useState({} as Errors);
   const [user, setUser] = useState<UserType>();
@@ -90,12 +90,12 @@ const UserDetails: React.FC = () => {
   const breadcrumb = [
     {
       active: true,
-      href: "/users",
-      text: "Users",
+      href: "/",
+      text: "Home",
     },
     {
       active: true,
-      href: `/users/${userId}`,
+      href: `/account/${userId}`,
       text: user.email,
     },
   ];
@@ -105,7 +105,7 @@ const UserDetails: React.FC = () => {
       {showLoader && <Loader />}
       <Row>
         <Col>
-          <PageTitle title="Edit user" description="Edit user details" />
+          <PageTitle title="My account" description="Edit account details" />
           <BreadCrumb items={breadcrumb} />
         </Col>
       </Row>
@@ -118,6 +118,7 @@ const UserDetails: React.FC = () => {
               onSubmit={handleSubmit}
               errors={errors}
               user={user}
+              myAccount={true}
             />
           </Panel>
         </Col>
@@ -126,4 +127,4 @@ const UserDetails: React.FC = () => {
   );
 };
 
-export default UserDetails;
+export default MyAccount;

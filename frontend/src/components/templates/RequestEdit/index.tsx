@@ -1,12 +1,11 @@
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Col, Container, Row } from "react-bootstrap";
 import * as Yup from "yup";
 import getValidationErrors, {
   Errors,
 } from "../../../utils/getValidationErrors";
 
-import { useAuth } from "../../../hooks/auth";
 import api from "../../../services/api";
 
 import PageTitle from "../../elements/PageTitle/PageTitle";
@@ -14,28 +13,51 @@ import Panel from "../../elements/Panel/Panel";
 import RequestForm from "../../modules/RequestForm";
 import Breadcrumb from "../../elements/Breadcrumb";
 import Loader from "../../elements/Loader";
+import { RequestType } from "../../../@types";
 
 interface RequestState {
   host: string;
-  databases: string[];
+  databases: string;
   ddl_command: string;
   description: string;
   time_to_run: string;
   schedule: string;
 }
 
-const RequestCreate: React.FC = () => {
+const RequestEdit: React.FC = () => {
   const router = useRouter();
 
-  const { user } = useAuth();
-
   const [errors, setErrors] = useState({} as Errors);
-  const [request, setRequest] = useState({} as RequestState);
+  const [request, setRequest] = useState<RequestType>();
+  const [changedRequest, setChangedRequest] = useState({});
   const [showLoader, setShowLoader] = useState(false);
 
+  const requestIdParam = router.query.id;
+
+  useEffect(() => {
+    if (!request && requestIdParam) {
+      loadData(requestIdParam);
+    }
+  }, [requestIdParam]);
+
+  const loadData = async (requestId: string | string[]) => {
+    const response = await api.get<RequestType>(`requests/detail/${requestId}`);
+    const request = response.data;
+    setRequest(request);
+    setChangedRequest({
+      databases: JSON.parse(request.databases || "[]"),
+      ddl_command: request.ddl_command,
+      description: request.description,
+    });
+  };
+
+  if (!request) {
+    return <Loader />;
+  }
+
   const handleChange = (key: string, value: any) => {
-    setRequest({
-      ...request,
+    setChangedRequest({
+      ...changedRequest,
       [key]: value,
     });
   };
@@ -45,14 +67,12 @@ const RequestCreate: React.FC = () => {
       event.preventDefault();
 
       const schema = Yup.object().shape({
-        host: Yup.string().required("Host is required"),
         databases: Yup.array()
           .of(Yup.object())
           .min(1)
-          .required("Databases are required"),
+          .required("Databases is required"),
         ddl_command: Yup.string().required("DDL is required"),
         description: Yup.string().required("Description is required"),
-        time_to_run: Yup.string().required("Time to run is required"),
         schedule: Yup.string()
           .nullable(true)
           .when("time_to_run", {
@@ -61,7 +81,7 @@ const RequestCreate: React.FC = () => {
           }),
       });
 
-      await schema.validate(request, {
+      await schema.validate(changedRequest, {
         abortEarly: false,
       });
 
@@ -69,12 +89,11 @@ const RequestCreate: React.FC = () => {
         request.schedule = null;
       }
 
-      setShowLoader(true);
-
       try {
-        const response = await api.post("/requests", {
-          ...request,
-          userId: user.id,
+        setShowLoader(true);
+
+        const response = await api.patch(`/requests/edit/${requestIdParam}`, {
+          ...changedRequest,
         });
 
         const requestId = response.data.id;
@@ -83,7 +102,6 @@ const RequestCreate: React.FC = () => {
       } catch (err) {
         console.log(`ERROR: ${err}`);
       }
-
       setShowLoader(false);
     } catch (error) {
       if (error instanceof Yup.ValidationError) {
@@ -101,8 +119,8 @@ const RequestCreate: React.FC = () => {
     },
     {
       active: true,
-      href: `/requests/create`,
-      text: "New request",
+      href: `/requests/${requestIdParam}`,
+      text: `${requestIdParam}`,
     },
   ];
 
@@ -111,10 +129,7 @@ const RequestCreate: React.FC = () => {
       {showLoader && <Loader />}
       <Row>
         <Col>
-          <PageTitle
-            title="New request"
-            description="Create new pull request"
-          />
+          <PageTitle title="Edit request" description="Edit request details" />
           <Breadcrumb items={breadcrumb} />
         </Col>
       </Row>
@@ -126,6 +141,7 @@ const RequestCreate: React.FC = () => {
               onChange={handleChange}
               onSubmit={handleSubmit}
               errors={errors}
+              request={request}
             />
           </Panel>
         </Col>
@@ -134,4 +150,4 @@ const RequestCreate: React.FC = () => {
   );
 };
 
-export default RequestCreate;
+export default RequestEdit;

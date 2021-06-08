@@ -1,15 +1,17 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button, Col, Container, Form, Row } from 'react-bootstrap';
 import { Errors } from '../../../utils/getValidationErrors';
 import FormGroup from '../../elements/FormGroup/FormGroup';
 import Select from '../../elements/Select/Select';
 import { useRouter } from 'next/router';
 import moment from 'moment';
+import { DatabasesType, RequestType } from '../../../@types';
 
-interface UserFormProps {
+interface RequestFormProps {
   onChange: (key: string, value: any) => void;
   onSubmit: (event: React.FormEvent) => Promise<void>;
   errors?: Errors;
+  request?: RequestType;
 }
 
 const hostOptions = [
@@ -65,13 +67,34 @@ const databasesOptions = [
   },
 ];
 
-const RequestForm: React.FC<UserFormProps> = ({
+const RequestForm: React.FC<RequestFormProps> = ({
   onChange,
   onSubmit,
   errors,
+  request,
 }) => {
   const router = useRouter();
   const [disabledSchedule, setDisabledSchedule] = useState(true);
+  const [defaultSchedule, setDefaultSchedule] = useState('');
+
+  const handleDefaultSchedule = (
+    schedule: Date | null,
+    timeToRun: string | null
+  ) => {
+    if (schedule && timeToRun == 'schedule') {
+      setDisabledSchedule(false);
+      setDefaultSchedule(moment(schedule).format('YYYY-MM-DDTHH:mm'));
+      return;
+    }
+
+    setDefaultSchedule('');
+    setDisabledSchedule(true);
+    onChange('schedule', null);
+  };
+
+  useEffect(() => {
+    handleDefaultSchedule(request?.schedule, request?.time_to_run);
+  }, []);
 
   const handleChangeInput = ({
     target,
@@ -81,17 +104,19 @@ const RequestForm: React.FC<UserFormProps> = ({
   };
 
   const handleChangeTimeToRun = (value: string) => {
-    if (value == 'anytime' || value == 'soon') {
+    if (value != 'schedule') {
       setDisabledSchedule(true);
       errors.schedule = null;
-      return onChange('timeToRun', value);
+      return onChange('time_to_run', value);
     }
     setDisabledSchedule(false);
 
-    return onChange('timeToRun', value);
+    return onChange('time_to_run', value);
   };
 
-  const handleChangeSchedule = (target) => {
+  const handleChangeSchedule = ({
+    target,
+  }: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = target;
     errors.schedule = null;
     const date = moment(value).format('YYYY-MM-DD HH:mm');
@@ -101,6 +126,33 @@ const RequestForm: React.FC<UserFormProps> = ({
   const handleCancel = () => {
     router.push(`/`);
   };
+
+  const defaultOptionHost = hostOptions.filter((option) => {
+    if (option.value == request?.host) {
+      return option;
+    }
+  });
+
+  const defaultOptionTimeToRun = timeToRunOptions.filter((option) => {
+    if (option.value == request?.time_to_run) {
+      return option;
+    }
+  });
+
+  const defaultOptionDatabases = databasesOptions.filter((option) => {
+    const databases: DatabasesType = JSON.parse(request?.databases || '[]');
+    let optionFound = null;
+
+    databases.forEach((database) => {
+      if (option.value == database.value) {
+        optionFound = option;
+      }
+    });
+
+    if (optionFound) {
+      return optionFound;
+    }
+  });
 
   return (
     <Form onSubmit={onSubmit}>
@@ -112,6 +164,7 @@ const RequestForm: React.FC<UserFormProps> = ({
               <Select
                 instanceId="host"
                 name="host"
+                defaultValue={defaultOptionHost}
                 onChange={({ value }) => onChange('host', value)}
                 options={hostOptions}
                 isInvalid={!!errors.host}
@@ -127,6 +180,7 @@ const RequestForm: React.FC<UserFormProps> = ({
               <Select
                 instanceId="databases"
                 name="databases"
+                defaultValue={defaultOptionDatabases}
                 onChange={(value: string) => onChange('databases', value)}
                 options={databasesOptions}
                 isMulti
@@ -135,15 +189,19 @@ const RequestForm: React.FC<UserFormProps> = ({
             </FormGroup>
           </Col>
           <Col sm="12" lg="12">
-            <FormGroup hasError={!!errors.ddl} errorMessage={errors.ddl}>
+            <FormGroup
+              hasError={!!errors.ddl_command}
+              errorMessage={errors.ddl_command}
+            >
               <Form.Label>DDL Command (SQL)</Form.Label>
               <Form.Control
                 as="textarea"
                 rows={3}
-                name="ddl"
+                name="ddl_command"
+                defaultValue={request?.ddl_command}
                 onChange={handleChangeInput}
                 placeholder="Enter the SQL"
-                isInvalid={!!errors.ddl}
+                isInvalid={!!errors.ddl_command}
               />
             </FormGroup>
           </Col>
@@ -156,6 +214,7 @@ const RequestForm: React.FC<UserFormProps> = ({
               <Form.Control
                 type="text"
                 name="description"
+                defaultValue={request?.description}
                 onChange={handleChangeInput}
                 placeholder="Enter the description"
                 isInvalid={!!errors.description}
@@ -164,16 +223,17 @@ const RequestForm: React.FC<UserFormProps> = ({
           </Col>
           <Col sm="12" lg="6">
             <FormGroup
-              hasError={!!errors.timeToRun}
-              errorMessage={errors.timeToRun}
+              hasError={!!errors.time_to_run}
+              errorMessage={errors.time_to_run}
             >
               <Form.Label>Time to Run</Form.Label>
               <Select
-                instanceId="timeToRun"
-                name="timeToRun"
+                instanceId="time_to_run"
+                name="time_to_run"
+                defaultValue={defaultOptionTimeToRun}
                 onChange={({ value }) => handleChangeTimeToRun(value)}
                 options={timeToRunOptions}
-                isInvalid={!!errors.timeToRun}
+                isInvalid={!!errors.time_to_run}
               />
             </FormGroup>
           </Col>
@@ -187,9 +247,8 @@ const RequestForm: React.FC<UserFormProps> = ({
                 type="datetime-local"
                 disabled={disabledSchedule}
                 name="schedule"
-                onChange={({ target }: React.ChangeEvent<HTMLInputElement>) =>
-                  handleChangeSchedule(target)
-                }
+                defaultValue={defaultSchedule}
+                onChange={handleChangeSchedule}
                 isInvalid={!!errors.schedule}
               />
             </FormGroup>

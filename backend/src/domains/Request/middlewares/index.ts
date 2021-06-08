@@ -12,12 +12,12 @@ export const createMiddleware = async (
     userId: Yup.string().required('userId is required'),
     host: Yup.string().required('Host is required'),
     databases: Yup.array().of(Yup.object()).required('Databases are required'),
-    ddl: Yup.string().required('DDL is required'),
+    ddl_command: Yup.string().required('DDL is required'),
     description: Yup.string().required('Description is required'),
-    timeToRun: Yup.string().required('Time to run is required'),
+    time_to_run: Yup.string().required('Time to run is required'),
     schedule: Yup.string()
       .nullable(true)
-      .when('timeToRun', {
+      .when('time_to_run', {
         is: 'schedule',
         then: Yup.string().required('Schedule is required'),
       }),
@@ -60,10 +60,10 @@ export const editMiddleware = async (
     userId: Yup.string(),
     host: Yup.string(),
     databases: Yup.array().of(Yup.object()),
-    ddl: Yup.string(),
+    ddl_command: Yup.string(),
     description: Yup.string(),
-    timeToRun: Yup.string(),
-    schedule: Yup.string().nullable(true).when('timeToRun', {
+    time_to_run: Yup.string(),
+    schedule: Yup.string().nullable(true).when('time_to_run', {
       is: 'schedule',
       then: Yup.string(),
     }),
