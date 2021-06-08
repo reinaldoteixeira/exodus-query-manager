@@ -157,10 +157,10 @@ const Settings: React.FC = () => {
           <Panel>
             <Col sm="12" lg="12">
               <FormGroup>
-                <Form.Label>DDL Command (SQL)</Form.Label>
+                <Form.Label>Configs</Form.Label>
                 <Form.Control
                   as="textarea"
-                  rows={10}
+                  rows={15}
                   name="config"
                   defaultValue={config.content}
                   onChange={handleChangeInput}

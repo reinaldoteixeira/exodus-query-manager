@@ -5,7 +5,8 @@ import FormGroup from '../../elements/FormGroup/FormGroup';
 import Select from '../../elements/Select/Select';
 import { useRouter } from 'next/router';
 import moment from 'moment';
-import { DatabasesType, RequestType } from '../../../@types';
+import { ConfigType, DatabasesType, RequestType } from '../../../@types';
+import api from '../../../services/api';
 
 interface RequestFormProps {
   onChange: (key: string, value: any) => void;
@@ -14,20 +15,10 @@ interface RequestFormProps {
   request?: RequestType;
 }
 
-const hostOptions = [
-  {
-    label: 'Localhost',
-    value: 'localhost',
-  },
-  {
-    label: 'Lyra',
-    value: 'localhost1',
-  },
-  {
-    label: 'Orion',
-    value: 'localhost2',
-  },
-];
+interface ContentType {
+  databases: string[];
+  hosts: string[];
+}
 
 const timeToRunOptions = [
   {
@@ -48,25 +39,6 @@ const timeToRunOptions = [
   },
 ];
 
-const databasesOptions = [
-  {
-    label: 'edoc',
-    value: 'edoc',
-  },
-  {
-    label: 'edoc_2',
-    value: 'edoc_2',
-  },
-  {
-    label: 'edoc_468',
-    value: 'edoc_468',
-  },
-  {
-    label: 'edoc_493',
-    value: 'edoc_493',
-  },
-];
-
 const RequestForm: React.FC<RequestFormProps> = ({
   onChange,
   onSubmit,
@@ -76,6 +48,8 @@ const RequestForm: React.FC<RequestFormProps> = ({
   const router = useRouter();
   const [disabledSchedule, setDisabledSchedule] = useState(true);
   const [defaultSchedule, setDefaultSchedule] = useState('');
+  const [databasesOptions, setDatabasesOptions] = useState([]);
+  const [hostOptions, setHostOptions] = useState([]);
 
   const handleDefaultSchedule = (
     schedule: Date | null,
@@ -94,7 +68,34 @@ const RequestForm: React.FC<RequestFormProps> = ({
 
   useEffect(() => {
     handleDefaultSchedule(request?.schedule, request?.time_to_run);
+    loadData();
   }, []);
+
+  const loadData = async () => {
+    const response = await api.get<ConfigType>(`configs/list`);
+
+    let content = response.data?.content;
+
+    if (content) {
+      const config: ContentType = JSON.parse(content);
+
+      const databases = config?.databases.map((database) => {
+        return {
+          label: database,
+          value: database,
+        };
+      });
+      setDatabasesOptions(databases);
+
+      const hosts = config?.hosts.map((host) => {
+        return {
+          label: host.split(':')[0] || host,
+          value: host,
+        };
+      });
+      setHostOptions(hosts);
+    }
+  };
 
   const handleChangeInput = ({
     target,

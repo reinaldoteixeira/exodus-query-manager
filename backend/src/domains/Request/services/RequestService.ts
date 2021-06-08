@@ -134,11 +134,17 @@ class RequestService {
         id,
       });
 
+      let host = request.host.split(':')[0] || 'DEFAULT';
+
+      if (host) {
+        host = host.toUpperCase();
+      }
+
       var connection = await mysql.createConnection({
-        host: process.env.DB_EXPLAIN_HOST,
-        port: process.env.DB_EXPLAIN_PORT,
-        user: process.env.DB_EXPLAIN_USERNAME,
-        password: process.env.DB_EXPLAIN_PASSWORD,
+        host: process.env[`DB_EXPLAIN_HOST_${host}`],
+        port: process.env[`DB_EXPLAIN_PORT_${host}`],
+        user: process.env[`DB_EXPLAIN_USERNAME_${host}`],
+        password: process.env[`DB_EXPLAIN_PASSWORD_${host}`],
         database: database,
       });
 
