@@ -1,14 +1,14 @@
-import { useRouter } from "next/router";
-import { NavText, NavIcon } from "@trendmicro/react-sidenav";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useRouter } from 'next/router';
+import { NavText, NavIcon } from '@trendmicro/react-sidenav';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faCodeBranch,
   faUser,
   faUsers,
   faCog,
-} from "@fortawesome/free-solid-svg-icons";
-import { SideNav, NavItem } from "./styles";
-import { useAuth } from "../../../hooks/auth";
+} from '@fortawesome/free-solid-svg-icons';
+import { SideNav, NavItem } from './styles';
+import { useAuth } from '../../../hooks/auth';
 
 interface SidebarProps {
   onToggle: () => void;
@@ -30,9 +30,9 @@ const Sidebar: React.FC<SidebarProps> = ({ onToggle }) => {
       <SideNav.Nav defaultSelected="/">
         <NavItem
           eventKey="/requests"
-          active={pathname === "/"}
+          active={pathname === '/'}
           onClick={() => {
-            handleNavigation("/");
+            handleNavigation('/');
           }}
         >
           <NavIcon>
@@ -44,9 +44,9 @@ const Sidebar: React.FC<SidebarProps> = ({ onToggle }) => {
           <>
             <NavItem
               eventKey="/users"
-              active={pathname === "/users"}
+              active={pathname === '/users'}
               onClick={() => {
-                handleNavigation("/users");
+                handleNavigation('/users');
               }}
             >
               <NavIcon>
@@ -56,9 +56,9 @@ const Sidebar: React.FC<SidebarProps> = ({ onToggle }) => {
             </NavItem>
             <NavItem
               eventKey="/settings"
-              active={pathname === "/settings"}
+              active={pathname === '/settings'}
               onClick={() => {
-                handleNavigation("/settings");
+                handleNavigation('/settings');
               }}
             >
               <NavIcon>
@@ -68,11 +68,11 @@ const Sidebar: React.FC<SidebarProps> = ({ onToggle }) => {
             </NavItem>
           </>
         ) : (
-          ""
+          ''
         )}
         <NavItem
           eventKey="/account"
-          active={pathname === `/account/${user.id}`}
+          active={pathname === '/account/[id]'}
           onClick={() => {
             handleNavigation(`/account/${user.id}`);
           }}

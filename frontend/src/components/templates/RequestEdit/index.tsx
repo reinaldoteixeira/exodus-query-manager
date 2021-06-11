@@ -1,19 +1,19 @@
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-import { Col, Container, Row } from "react-bootstrap";
-import * as Yup from "yup";
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
+import { Col, Container, Row } from 'react-bootstrap';
+import * as Yup from 'yup';
 import getValidationErrors, {
   Errors,
-} from "../../../utils/getValidationErrors";
+} from '../../../utils/getValidationErrors';
 
-import api from "../../../services/api";
+import api from '../../../services/api';
 
-import PageTitle from "../../elements/PageTitle/PageTitle";
-import Panel from "../../elements/Panel/Panel";
-import RequestForm from "../../modules/RequestForm";
-import Breadcrumb from "../../elements/Breadcrumb";
-import Loader from "../../elements/Loader";
-import { RequestType } from "../../../@types";
+import PageTitle from '../../elements/PageTitle/PageTitle';
+import Panel from '../../elements/Panel/Panel';
+import RequestForm from '../../modules/RequestForm';
+import Breadcrumb from '../../elements/Breadcrumb';
+import Loader from '../../elements/Loader';
+import { RequestType } from '../../../@types';
 
 interface RequestState {
   host: string;
@@ -45,7 +45,7 @@ const RequestEdit: React.FC = () => {
     const request = response.data;
     setRequest(request);
     setChangedRequest({
-      databases: JSON.parse(request.databases || "[]"),
+      databases: JSON.parse(request.databases || '[]'),
       ddl_command: request.ddl_command,
       description: request.description,
     });
@@ -70,14 +70,14 @@ const RequestEdit: React.FC = () => {
         databases: Yup.array()
           .of(Yup.object())
           .min(1)
-          .required("Databases is required"),
-        ddl_command: Yup.string().required("DDL is required"),
-        description: Yup.string().required("Description is required"),
+          .required('Databases is required'),
+        ddl_command: Yup.string().required('DDL is required'),
+        description: Yup.string().required('Description is required'),
         schedule: Yup.string()
           .nullable(true)
-          .when("time_to_run", {
-            is: "schedule",
-            then: Yup.string().required("Schedule is required"),
+          .when('time_to_run', {
+            is: 'schedule',
+            then: Yup.string().required('Schedule is required'),
           }),
       });
 
@@ -85,7 +85,7 @@ const RequestEdit: React.FC = () => {
         abortEarly: false,
       });
 
-      if (request.schedule && request.time_to_run != "schedule") {
+      if (request.schedule && request.time_to_run != 'schedule') {
         request.schedule = null;
       }
 
@@ -114,8 +114,8 @@ const RequestEdit: React.FC = () => {
   const breadcrumb = [
     {
       active: true,
-      href: "/",
-      text: "Home",
+      href: '/',
+      text: 'Home',
     },
     {
       active: true,

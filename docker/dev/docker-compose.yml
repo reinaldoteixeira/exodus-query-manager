@@ -1,8 +1,8 @@
-version: "3"
+version: '3'
 services:
-  exd-mysql:
+  exodus-mysql-dev:
     image: mysql:8.0.16
-    container_name: exd-mysql
+    container_name: exodus-mysql-dev
     command: --default-authentication-plugin=mysql_native_password
     ports:
       - 3308:3306
@@ -10,7 +10,7 @@ services:
       - MYSQL_DATABASE=exodus
       - MYSQL_ROOT_PASSWORD=root
     volumes:
-      - ./mysql-db:/docker-entrypoint-initdb.d
-      - ./storage/.db:/var/lib/mysql
+      - ./mysql/mysql-db:/docker-entrypoint-initdb.d
+      - ./mysql/storage/.db:/var/lib/mysql
     security_opt:
       - seccomp:unconfined

@@ -53,7 +53,9 @@ const RequestDetails: React.FC = () => {
   const [approved, setApproved] = useState(null);
   const [requestChanges, setRequestChanges] = useState(null);
 
+  const [editDisabled, setEditDisabled] = useState(false);
   const [approveDisabled, setApproveDisabled] = useState(false);
+  const [unapproveDisabled, setUnapproveDisabled] = useState(false);
   const [changesDisabled, setChangesDisabled] = useState(false);
   const [executeDisabled, setExecuteDisabled] = useState(false);
   const [declineDisabled, setDeclineDisabled] = useState(false);
@@ -88,6 +90,8 @@ const RequestDetails: React.FC = () => {
       setChangesDisabled(true);
       setExecuteDisabled(true);
       setDeclineDisabled(true);
+      setEditDisabled(true);
+      setUnapproveDisabled(true);
     }
   };
 
@@ -301,6 +305,7 @@ const RequestDetails: React.FC = () => {
               size="sm"
               variant="primary"
               onClick={() => handleEditRequest()}
+              disabled={editDisabled}
             >
               <FontAwesomeIcon icon={faEdit} /> Edit request
             </Button>
@@ -321,6 +326,7 @@ const RequestDetails: React.FC = () => {
               size="sm"
               variant="secondary"
               onClick={() => handleDeleteReview(1)}
+              disabled={unapproveDisabled}
             >
               <FontAwesomeIcon icon={faCheckCircle} /> Unapprove
             </Button>

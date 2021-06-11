@@ -7,17 +7,25 @@ import { User } from '../../domains/User/models/User';
 
 export default class CreateUserSeeder implements Seeder {
   public async run(factory: Factory, connection: Connection): Promise<any> {
-    await connection
+    const user = await connection
       .createQueryBuilder()
-      .insert()
-      .into(User)
-      .values({
-        id: ulid(),
-        name: 'Admin',
-        email: 'admin@exodus.com',
-        role: 1,
-        password: bcrypt.hashSync('123456'),
-      })
-      .execute();
+      .from(User, 'users')
+      .where('users.email = :email', { email: 'admin@exodus.com' })
+      .getCount();
+
+    if (!user) {
+      await connection
+        .createQueryBuilder()
+        .insert()
+        .into(User)
+        .values({
+          id: ulid(),
+          name: 'Admin',
+          email: 'admin@exodus.com',
+          role: 1,
+          password: bcrypt.hashSync('123456'),
+        })
+        .execute();
+    }
   }
 }

@@ -38,7 +38,7 @@ export class CreateRequests1619136673950 implements MigrationInterface {
           },
           {
             name: 'ddl_command',
-            type: 'varchar',
+            type: 'mediumtext',
           },
           {
             name: 'status',

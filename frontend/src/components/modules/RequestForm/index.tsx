@@ -51,6 +51,9 @@ const RequestForm: React.FC<RequestFormProps> = ({
   const [databasesOptions, setDatabasesOptions] = useState([]);
   const [hostOptions, setHostOptions] = useState([]);
 
+  const [defaultOptionHost, setDefaultOptionHost] = useState([]);
+  const [defaultOptionDatabases, setDefaultOptionDatabases] = useState([]);
+
   const handleDefaultSchedule = (
     schedule: Date | null,
     timeToRun: string | null
@@ -94,6 +97,47 @@ const RequestForm: React.FC<RequestFormProps> = ({
         };
       });
       setHostOptions(hosts);
+
+      const defaultHost = config?.hosts
+        .filter((option) => {
+          if (option == request?.host) {
+            return option;
+          }
+        })
+        .map((host) => {
+          return {
+            label: host.split(':')[0] || host,
+            value: host,
+          };
+        });
+
+      setDefaultOptionHost(defaultHost);
+
+      const defaultDatabases = config?.databases
+        .filter((option) => {
+          const databasesRequest: DatabasesType = JSON.parse(
+            request?.databases || '[]'
+          );
+          let optionFound = null;
+
+          databasesRequest.forEach((database) => {
+            if (option == database.value) {
+              optionFound = option;
+            }
+          });
+
+          if (optionFound) {
+            return optionFound;
+          }
+        })
+        .map((database) => {
+          return {
+            label: database,
+            value: database,
+          };
+        });
+
+      setDefaultOptionDatabases(defaultDatabases);
     }
   };
 
@@ -128,30 +172,9 @@ const RequestForm: React.FC<RequestFormProps> = ({
     router.push(`/`);
   };
 
-  const defaultOptionHost = hostOptions.filter((option) => {
-    if (option.value == request?.host) {
-      return option;
-    }
-  });
-
   const defaultOptionTimeToRun = timeToRunOptions.filter((option) => {
     if (option.value == request?.time_to_run) {
       return option;
-    }
-  });
-
-  const defaultOptionDatabases = databasesOptions.filter((option) => {
-    const databases: DatabasesType = JSON.parse(request?.databases || '[]');
-    let optionFound = null;
-
-    databases.forEach((database) => {
-      if (option.value == database.value) {
-        optionFound = option;
-      }
-    });
-
-    if (optionFound) {
-      return optionFound;
     }
   });
 
