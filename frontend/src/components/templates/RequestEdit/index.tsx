@@ -29,7 +29,7 @@ const RequestEdit: React.FC = () => {
 
   const [errors, setErrors] = useState({} as Errors);
   const [request, setRequest] = useState<RequestType>();
-  const [changedRequest, setChangedRequest] = useState({});
+  const [changedRequest, setChangedRequest] = useState({} as RequestState);
   const [showLoader, setShowLoader] = useState(false);
 
   const requestIdParam = router.query.id;
@@ -44,11 +44,6 @@ const RequestEdit: React.FC = () => {
     const response = await api.get<RequestType>(`requests/detail/${requestId}`);
     const request = response.data;
     setRequest(request);
-    setChangedRequest({
-      databases: JSON.parse(request.databases || '[]'),
-      ddl_command: request.ddl_command,
-      description: request.description,
-    });
   };
 
   if (!request) {
@@ -64,6 +59,18 @@ const RequestEdit: React.FC = () => {
 
   const handleSubmit = async (event: React.FormEvent) => {
     try {
+      if (!changedRequest.databases) {
+        changedRequest.databases = JSON.parse(request.databases || '[]');
+      }
+
+      if (!changedRequest.ddl_command) {
+        changedRequest.ddl_command = request.ddl_command;
+      }
+
+      if (!changedRequest.description) {
+        changedRequest.description = request.description;
+      }
+
       event.preventDefault();
 
       const schema = Yup.object().shape({

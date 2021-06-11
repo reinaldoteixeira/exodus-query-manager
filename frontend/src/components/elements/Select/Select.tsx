@@ -1,5 +1,5 @@
-import ReactSelect, { OptionTypeBase } from "react-select";
-import mainTheme from "../../../styles/theme";
+import ReactSelect, { OptionTypeBase } from 'react-select';
+import mainTheme from '../../../styles/theme';
 
 interface SelectProps extends OptionTypeBase {
   isInvalid?: boolean;

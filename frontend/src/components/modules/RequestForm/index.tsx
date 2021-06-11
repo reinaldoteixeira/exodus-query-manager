@@ -1,12 +1,16 @@
+import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { Button, Col, Container, Form, Row } from 'react-bootstrap';
-import { Errors } from '../../../utils/getValidationErrors';
+import moment from 'moment';
+
 import FormGroup from '../../elements/FormGroup/FormGroup';
 import Select from '../../elements/Select/Select';
-import { useRouter } from 'next/router';
-import moment from 'moment';
-import { ConfigType, DatabasesType, RequestType } from '../../../@types';
+import Loader from '../../elements/Loader';
+
 import api from '../../../services/api';
+
+import { ConfigType, DatabasesType, RequestType } from '../../../@types';
+import { Errors } from '../../../utils/getValidationErrors';
 
 interface RequestFormProps {
   onChange: (key: string, value: any) => void;
@@ -140,6 +144,14 @@ const RequestForm: React.FC<RequestFormProps> = ({
       setDefaultOptionDatabases(defaultDatabases);
     }
   };
+
+  if (
+    !databasesOptions.length ||
+    !hostOptions.length ||
+    (request && (!defaultOptionDatabases.length || !defaultOptionHost.length))
+  ) {
+    return <Loader />;
+  }
 
   const handleChangeInput = ({
     target,
